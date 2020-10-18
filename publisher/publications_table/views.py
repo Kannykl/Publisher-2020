@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Publication
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView
 
 
 def show_all_publications(request):
@@ -17,6 +17,18 @@ class PublicationCreateView(CreateView):
     model = Publication
     template_name = 'publications_table/publication_create.html'
     fields = '__all__'
+    success_url = '/all_publications/'
+
+    def form_valid(self, form):
+        return super().form_valid(form)
+
+
+class PublicationUpdateView(UpdateView):
+    """ Страница редактирования существубщей записи в таблице"""
+    model = Publication
+    fields = '__all__'
+    template_name = 'publications_table/publication_update.html'
+    context_object_name = 'publication'
     success_url = '/all_publications/'
 
     def form_valid(self, form):

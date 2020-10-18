@@ -31,6 +31,7 @@
         <td>{{publication.type_of_publication}}</td>
         <td>{{publication.range}}</td>
         <td>{{publication.uk_number}}</td>
+        <td><a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'publication-update' publication.id %}">Update</a></td>
       </tr>
     {% endfor %}
   {% endif %}
