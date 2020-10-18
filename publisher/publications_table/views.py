@@ -1,13 +1,18 @@
 from django.shortcuts import render
 from .models import Publication
 from django.views.generic import CreateView, UpdateView, DeleteView
+from .forms import PublicationFilter, SearchPublications
 
 
 def show_all_publications(request, type_of_sort=0):
     """ Страница отображения всех записей"""
     publications = sort(type_of_sort)
+    publications, form = filter_publications(request, publications)
+    publications, form2 = search_publications(request)
     context = {
-        'publications': publications
+        'publications': publications,
+        'form': form,
+        'form2': form2,
     }
     return render(request, "publications_table/all_publications.html", context)
 
@@ -43,7 +48,7 @@ class PublicationDeleteView(DeleteView):
 
 
 def sort(type_of_sort: int):
-    """ Сортирует записи по определенному полю"""
+    """ Сортирует записи по    form = PublicationFilter(request.GET) определенному полю"""
     dictionary = {
         '0': Publication.objects.all(),
         '1': Publication.objects.all().order_by('authors__military_rank'),
@@ -58,3 +63,41 @@ def sort(type_of_sort: int):
     }
     publications = dictionary[f'{type_of_sort}']
     return publications
+
+
+def filter_publications(request, publications):
+    """Фильтрует записи"""
+    form = PublicationFilter(request.GET)
+    if form.is_valid():
+        try:
+            if form.cleaned_data['min_year']:
+                publications = publications.filter(published_year__gte=form.cleaned_data['min_year'])
+
+            if form.cleaned_data['max_year']:
+                publications = publications.filter(published_year__lte=form.cleaned_data['max_year'])
+
+            if form.cleaned_data['rank']:
+                publications = publications.filter(authors__military_rank__in=
+                                                   form.cleaned_data['rank'])
+            if form.cleaned_data['type_of_publication']:
+                publications = publications.filter(type_of_publication__in=
+                                                   form.cleaned_data['type_of_publication'])
+        except:
+            raise IndexError
+    return publications, form
+
+
+def search_publications(request):
+    """ Поиск записей по названию или номеру УК"""
+    form = SearchPublications(request.GET)
+    publications = Publication.objects.all()
+    if form.is_valid():
+        if form.cleaned_data['search']:
+            publications = Publication.objects.all().filter(title__icontains=form.cleaned_data['search'])
+            if publications:
+                return publications, form
+            else:
+                publications = Publication.objects.all().filter(uk_number=form.cleaned_data['search'])
+            if publications:
+                return publications, form
+    return publications, form

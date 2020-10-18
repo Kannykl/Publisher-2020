@@ -2,6 +2,11 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <body>
+<div class="d-flex p-2">
+  <form action="" method="get">
+  {{ form2.as_p}}
+  <input type="submit" value="Поиск">
+</form>
 <table class="table">
   <thead>
     <tr>
@@ -17,7 +22,7 @@
     </tr>
   </thead>
   <tbody>
-  {% if publications %}
+  {% if publications.all %}
     {% for publication in publications%}
       <tr>
           {% for author in publication.authors.all %}
@@ -35,9 +40,15 @@
         <td><a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'publication-delete' publication.id %}">Delete</a></td>
       </tr>
     {% endfor %}
-  {% endif %}
+      {% endif %}
   </tbody>
 </table>
+  <form action="" method="get">
+  <a>Дата публикации</a>
+  {{ form.as_p}}
+  <input type="submit" value="Фильтр">
+</form>
+</div>
 </body>
 {% endblock content %}
 
