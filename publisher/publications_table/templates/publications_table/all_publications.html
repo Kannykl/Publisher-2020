@@ -1,0 +1,41 @@
+{% extends "publications_table/main.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<body>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Звание</th>
+      <th scope="col">ФИО</th>
+      <th scope="col">Должность</th>
+      <th scope="col">Название</th>
+      <th scope="col">Издание</th>
+      <th scope="col">Год публикации</th>
+      <th scope="col">Тип публикации</th>
+      <th scope="col">Диапазон</th>
+      <th scope="col">Номер УК</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% if publications %}
+    {% for publication in publications%}
+      <tr>
+          {% for author in publication.authors.all %}
+            <td>{{author.military_rank}}</td>
+            <td>{{author.get_initials}}</td>
+            <td>{{author.work_position}}</td>
+          {% endfor %}
+        <td>{{publication.title}}</td>
+        <td>{{publication.edition}}</td>
+        <td>{{publication.published_year}}</td>
+        <td>{{publication.type_of_publication}}</td>
+        <td>{{publication.range}}</td>
+        <td>{{publication.uk_number}}</td>
+      </tr>
+    {% endfor %}
+  {% endif %}
+  </tbody>
+</table>
+</body>
+{% endblock content %}
+

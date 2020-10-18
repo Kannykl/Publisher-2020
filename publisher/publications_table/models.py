@@ -14,6 +14,14 @@ class Author(models.Model):
     def __str__(self):
         return self.surname
 
+    def get_initials(self):
+        """ Получаем инициалы автора статей"""
+        initials = self.surname + ' ' + self.name[:1] + '.' + self.patronymic[:1] + '.'
+        return initials
+
+    def __repr__(self):
+        return self.military_rank + " " + self.surname
+
 
 class Publication(models.Model):
     """Запись в таблице о публикации"""
