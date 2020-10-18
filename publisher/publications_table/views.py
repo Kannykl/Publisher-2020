@@ -29,7 +29,7 @@ class PublicationCreateView(CreateView):
 
 
 class PublicationUpdateView(UpdateView):
-    """ Страница редактирования существубщей записи в таблице"""
+    """ Страница редактирования существующей записи в таблице"""
     model = Publication
     fields = '__all__'
     template_name = 'publications_table/publication_update.html'
@@ -48,7 +48,7 @@ class PublicationDeleteView(DeleteView):
 
 
 def sort(type_of_sort: int):
-    """ Сортирует записи по    form = PublicationFilter(request.GET) определенному полю"""
+    """ Сортирует записи по определенному полю"""
     dictionary = {
         '0': Publication.objects.all(),
         '1': Publication.objects.all().order_by('authors__military_rank'),
