@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Publication
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, DeleteView
 
 
 def show_all_publications(request):
@@ -33,3 +33,10 @@ class PublicationUpdateView(UpdateView):
 
     def form_valid(self, form):
         return super().form_valid(form)
+
+
+class PublicationDeleteView(DeleteView):
+    """ Страница удаления записи из таблицы """
+    model = Publication
+    template_name = 'publications_table/publication_delete.html'
+    success_url = '/all_publications/'
