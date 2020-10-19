@@ -4,13 +4,13 @@
 {% load widget_tweaks %}
 
 <body>
-  <form action="" method="get">
+<div class="wrapper">
+    <form action="" method="get">
     {% render_field form2.search class="form-control" placeholder="Поиск"%}
     <br/>
     <input type="submit" value="Найти">
   </form>
-<div class="d-flex p-2">
-<table class="table">
+<table class="table"align="left">
   <thead>
     <tr>
       <th scope="col"><a href="{% url 'sort' 1 %}">Звание</a></th>
@@ -47,8 +47,11 @@
   </tbody>
 </table>
   <form action="" method="get">
-    <a>Дата публикации</a>
-    {{form.as_p}}
+    {% render_field form.min_year class="form-control" placeholder="c:"%}
+    <br/>
+    {% render_field form.max_year class="form-control" placeholder="по:"%}
+    <br/>
+    {% render_field form.rank class="list"%}
   <input type="submit" value="Фильтр">
 </form>
 </div>
