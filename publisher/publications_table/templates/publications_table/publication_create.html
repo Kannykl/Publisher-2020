@@ -1,16 +1,29 @@
 {% extends "publications_table/main.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
+{% load widget_tweaks %}
 <body>
 <div class="content-section">
         <form method="POST">
             {% csrf_token %}
             <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Publication Create</legend>
-                {{ form|crispy }}
+                <legend class="border-bottom mb-4">Создание записи</legend>
+                {% render_field form.title class="form-control" placeholder="Название статьи" %}
+                <br/>
+                {% render_field form.authors class="custom-select" size="2" %}
+                <br/><br/>
+                {% render_field form.type_of_publication class="custom-select" size="1" %}
+                <br/><br/>
+                {% render_field form.edition class="form-control" placeholder="Издание"%}
+                <br/>
+                {% render_field form.published_year class="form-control" placeholder="Год публикации"%}
+                <br/>
+                {% render_field form.range class="form-control" placeholder="Диапазон"%}
+                <br/>
+                {% render_field form.uk_number class="form-control" placeholder="Номер УК"%}
             </fieldset>
             <div class="form-group">
-                <button class="btn btn-outline-info" type="submit">Create</button>
+                <button class="btn btn-outline-info" type="submit">Создать</button>
             </div>
         </form>
     </div>

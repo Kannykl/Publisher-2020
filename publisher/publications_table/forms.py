@@ -2,7 +2,7 @@ from django import forms
 
 
 class PublicationFilter(forms.Form):
-    min_year = forms.IntegerField(label='c', required=False)
+    min_year = forms.IntegerField(label='c', required=False,)
     max_year = forms.IntegerField(label='по', required=False)
     rank_options = (
         ('лейтенант', 'лейтенант'),
@@ -24,4 +24,4 @@ class PublicationFilter(forms.Form):
 
 
 class SearchPublications(forms.Form):
-    search = forms.CharField(max_length=255, label='Поиск', required=False)
+    search = forms.CharField(max_length=255, label='', required=False)

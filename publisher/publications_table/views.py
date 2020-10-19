@@ -67,39 +67,42 @@ def sort(type_of_sort: int):
 
 def filter_publications(request, publications):
     """Фильтрует записи"""
-    form = PublicationFilter(request.GET)
-    if form.is_valid():
-        if form.cleaned_data['min_year']:
-            publications = publications.filter(published_year__gte=form.cleaned_data['min_year'])
+    if request.method == 'GET':
+        form = PublicationFilter(request.GET)
+        if form.is_valid():
+            if form.cleaned_data['min_year']:
+                publications = publications.filter(published_year__gte=form.cleaned_data['min_year'])
 
-        if form.cleaned_data['max_year']:
-            publications = publications.filter(published_year__lte=form.cleaned_data['max_year'])
+            if form.cleaned_data['max_year']:
+                publications = publications.filter(published_year__lte=form.cleaned_data['max_year'])
 
-        if form.cleaned_data['rank']:
-            publications = publications.filter(authors__military_rank__in=
-                                               form.cleaned_data['rank'])
-        if form.cleaned_data['type_of_publication']:
-            publications = publications.filter(type_of_publication__in=
-                                               form.cleaned_data['type_of_publication'])
-    return publications, form
+            if form.cleaned_data['rank']:
+                publications = publications.filter(authors__military_rank__in=
+                                                   form.cleaned_data['rank'])
+            if form.cleaned_data['type_of_publication']:
+                publications = publications.filter(type_of_publication__in=
+                                                   form.cleaned_data['type_of_publication'])
+        return publications, form
 
 
 def search_publications(request, start_publications):
     """ Поиск записей по названию, изданию или номеру УК"""
-    form = SearchPublications(request.GET)
-    if form.is_valid():
-        if form.cleaned_data['search']:
-            publications = start_publications.filter(title=form.cleaned_data['search'])
-            if publications:
-                return publications, form
-            elif form.cleaned_data['search'].isdigit():
-                publications = start_publications.filter(uk_number=form.cleaned_data['search'])
+    if request.method == 'GET':
+        form = SearchPublications(request.GET)
+        if form.is_valid():
+            if form.cleaned_data['search']:
+                publications = start_publications.filter(title=form.cleaned_data['search'])
                 if publications:
                     return publications, form
-                else:
-                    publications = start_publications.filter(edition=form.cleaned_data['search'])
+                elif form.cleaned_data['search'].isdigit():
+                    publications = start_publications.filter(uk_number=form.cleaned_data['search'])
                     if publications:
                         return publications, form
-            return publications, form
-        else:
-            return start_publications, form
+                    else:
+                        publications = start_publications.filter(edition=form.cleaned_data['search'])
+                        if publications:
+                            return publications, form
+                return publications, form
+            else:
+                return start_publications, form
+        return start_publications, form

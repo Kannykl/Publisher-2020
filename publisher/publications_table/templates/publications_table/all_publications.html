@@ -1,12 +1,15 @@
 {% extends "publications_table/main.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
+{% load widget_tweaks %}
+
 <body>
-<div class="d-flex p-2">
   <form action="" method="get">
-  {{ form2.as_p}}
-  <input type="submit" value="Поиск">
-</form>
+    {% render_field form2.search class="form-control" placeholder="Поиск"%}
+    <br/>
+    <input type="submit" value="Найти">
+  </form>
+<div class="d-flex p-2">
 <table class="table">
   <thead>
     <tr>
@@ -44,8 +47,8 @@
   </tbody>
 </table>
   <form action="" method="get">
-  <a>Дата публикации</a>
-  {{ form.as_p}}
+    <a>Дата публикации</a>
+    {{form.as_p}}
   <input type="submit" value="Фильтр">
 </form>
 </div>
