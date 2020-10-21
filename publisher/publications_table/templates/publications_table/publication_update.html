@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 {% block content %}
 {% load widget_tweaks %}
-<body>
+<main role="main" class="container">
 <div class="content-section">
         <form method="POST">
             {% csrf_token %}
@@ -10,8 +10,9 @@
                 <legend class="border-bottom mb-4">Информация о "{{ object.title }}"</legend>
                 {% render_field form.title class="form-control" placeholder="Название статьи" %}
                 <br/>
-                {% render_field form.authors class="custom-select" size="2" %}
-                <br/><br/>
+                {% render_field form.authors class="list" %}
+                 <a class="nav-link disabled font-italic" href="{% url 'create-author' %}">добавить автора</a>
+                <br/>
                 {% render_field form.type_of_publication class="custom-select" size="1" %}
                 <br/><br/>
                 {% render_field form.edition class="form-control" placeholder="Издание"%}
@@ -27,5 +28,5 @@
             </div>
         </form>
     </div>
-</body>
+</main>
 {% endblock content %}

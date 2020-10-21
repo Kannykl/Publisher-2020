@@ -1,0 +1,27 @@
+{% extends "publications_table/main.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+{% load widget_tweaks %}
+<main role="main" class="container">
+<div class="content-section">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Создание автора</legend>
+                {% render_field form.name class="form-control" placeholder="Имя" %}
+                <br/>
+                {% render_field form.surname class="form-control" placeholder="Фамилия" %}
+                <br/>
+                {% render_field form.patronymic class="form-control" placeholder="Отчество" %}
+                <br/>
+                {% render_field form.military_rank class="form-control" placeholder="Звание"%}
+                <br/>
+                {% render_field form.work_position class="form-control" placeholder="Должность"%}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit">Создать</button>
+            </div>
+        </form>
+    </div>
+</main>
+{% endblock content %}

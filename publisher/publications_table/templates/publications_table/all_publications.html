@@ -2,6 +2,7 @@
 {% load crispy_forms_tags %}
 {% block content %}
 {% load widget_tweaks %}
+{% load static %}
 
 <body>
 <div class="wrapper">
@@ -10,7 +11,7 @@
     <br/>
     <input type="submit" value="Найти">
   </form>
-<table class="table"align="left">
+<table class="table" align="left">
   <thead>
     <tr>
       <th scope="col"><a href="{% url 'sort' 1 %}">Звание</a></th>
@@ -25,14 +26,23 @@
     </tr>
   </thead>
   <tbody>
-  {% if publications.all %}
     {% for publication in publications%}
       <tr>
-          {% for author in publication.authors.all %}
-            <td>{{author.military_rank}}</td>
-            <td>{{author.get_initials}}</td>
-            <td>{{author.work_position}}</td>
+        <td>
+        {% for author in publication.authors.all%}
+          {{author.military_rank}}
           {% endfor %}
+        </td>
+         <td>
+        {% for author in publication.authors.all%}
+          {{author.get_initials}}
+           {% endfor %}
+        </td>
+         <td>
+        {% for author in publication.authors.all%}
+          {{author.work_position}}
+          {% endfor %}
+        </td>
         <td>{{publication.title}}</td>
         <td>{{publication.edition}}</td>
         <td>{{publication.published_year}}</td>
@@ -43,18 +53,21 @@
         <td><a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'publication-delete' publication.id %}">Delete</a></td>
       </tr>
     {% endfor %}
-      {% endif %}
   </tbody>
 </table>
-  <form action="" method="get">
-    {% render_field form.min_year class="form-control" placeholder="c:"%}
+  <form action="{% url 'json_filter' %}" method="get" name="filter">
+    {% render_field form.min_year class="form-control" placeholder="c"%}
     <br/>
-    {% render_field form.max_year class="form-control" placeholder="по:"%}
+    {% render_field form.max_year class="form-control" placeholder="по"%}
     <br/>
     {% render_field form.rank class="list"%}
-  <input type="submit" value="Фильтр">
+    <br/>
+    {% render_field form.type_of_publication class="list"%}
+  <input type="submit" value="Показать результаты">
 </form>
 </div>
+<script src="http://twitter.github.com/hogan.js/builds/3.0.1/hogan-3.0.1.js"></script>
+<script src="{% static 'js/script.js' %}"></script>
 </body>
 {% endblock content %}
 

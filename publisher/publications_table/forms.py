@@ -1,12 +1,13 @@
 from django import forms
+from .models import Publication, Author
 
 
 class PublicationFilter(forms.Form):
     min_year = forms.IntegerField(label='c', required=False,)
     max_year = forms.IntegerField(label='по', required=False)
     rank_options = (
-        ('лейтенант', 'лейтенант'),
         ('рядовой', 'рядовой'),
+        ('лейтенант', 'лейтенант'),
         ('старший лейтенант', 'старший лейтенант'),
         ('капитан', 'капитан'),
         ('майор', 'майор'),
@@ -25,3 +26,12 @@ class PublicationFilter(forms.Form):
 
 class SearchPublications(forms.Form):
     search = forms.CharField(max_length=255, label='', required=False)
+
+
+class PublicationCreateForm(forms.ModelForm):
+    authors = forms.ModelMultipleChoiceField(Author.objects.all(), widget=forms.CheckboxSelectMultiple)
+
+    class Meta:
+        model = Publication
+        fields = '__all__'
+        exclude = ['authors']

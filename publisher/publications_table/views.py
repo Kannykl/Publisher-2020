@@ -1,7 +1,9 @@
-from django.shortcuts import render
-from .models import Publication
-from django.views.generic import CreateView, UpdateView, DeleteView
-from .forms import PublicationFilter, SearchPublications
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
+from .models import Publication, Author
+from django.views.generic import CreateView, UpdateView, DeleteView, ListView
+from .forms import PublicationFilter, SearchPublications, PublicationCreateForm
+from django.db.models import Q
 
 
 def show_all_publications(request, type_of_sort=0):
@@ -15,17 +17,6 @@ def show_all_publications(request, type_of_sort=0):
         'form2': form2,
     }
     return render(request, "publications_table/all_publications.html", context)
-
-
-class PublicationCreateView(CreateView):
-    """ Страница создания новой записи"""
-    model = Publication
-    template_name = 'publications_table/publication_create.html'
-    fields = '__all__'
-    success_url = '/all_publications/'
-
-    def form_valid(self, form):
-        return super().form_valid(form)
 
 
 class PublicationUpdateView(UpdateView):
@@ -106,3 +97,45 @@ def search_publications(request, start_publications):
             else:
                 return start_publications, form
         return start_publications, form
+
+
+class JsonFilterPublicationsView(ListView):
+    """ Фильтр с помощью аякс запроса """
+
+    def get_queryset(self):
+        queryset = Publication.objects.all().filter(
+            Q(type_of_publication__in=self.request.GET.getlist('type_of_publication')) |
+            Q(authors__military_rank__in=self.request.GET.getlist('rank'))
+        ).distinct().values("title", "edition", "published_year", "type_of_publication", "range", "uk_number",
+                            "authors", "authors__military_rank", "authors__name", "authors__surname",
+                            "authors__patronymic")
+
+        return queryset
+
+    def get(self, request, *args, **kwargs):
+        queryset = list(self.get_queryset())
+        return JsonResponse({'publications': queryset}, safe=False)
+
+
+class AuthorCreateView(CreateView):
+    """ Добавление автора пользователем """
+    model = Author
+    template_name = 'publications_table/author_create.html'
+    fields = '__all__'
+    success_url = '/create_publication/'
+
+    def form_valid(self, form):
+        return super().form_valid(form)
+
+
+def create_publication(request):
+    """ Страница добавления записи в таблицу"""
+    if request.method == 'POST':
+        form = PublicationCreateForm(request.POST)
+        if form.is_valid():
+            print(Publication.objects.filter(authors__surname__in=form.cleaned_data['authors']))
+            form.save()
+            return redirect('/all_publications/')
+    else:
+        form = PublicationCreateForm()
+    return render(request, 'publications_table/publication_create.html', {'form': form})

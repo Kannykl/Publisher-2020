@@ -12,7 +12,7 @@ class Author(models.Model):
     military_rank = models.CharField(max_length=255, null=False, verbose_name="звание")
 
     def __str__(self):
-        return self.surname
+        return "" + self.get_initials()
 
     def get_initials(self):
         """ Получаем инициалы автора статей"""
@@ -20,7 +20,10 @@ class Author(models.Model):
         return initials
 
     def __repr__(self):
-        return self.military_rank + " " + self.surname
+        return self.surname
+
+    class Meta:
+        ordering = ('surname',)
 
 
 class Publication(models.Model):
