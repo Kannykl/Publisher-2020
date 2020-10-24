@@ -6,7 +6,7 @@
 
 <body>
 <div class="wrapper">
-    <form action="" method="get">
+    <form action="{% url 'json_search' %}" method="get" name="search">
     {% render_field form2.search class="form-control" placeholder="Поиск"%}
     <br/>
     <input type="submit" value="Найти">

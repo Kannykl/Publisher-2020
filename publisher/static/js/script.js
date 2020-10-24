@@ -11,7 +11,7 @@ function ajaxSend(url, params) {
         .catch(error => console.error(error))
 }
 
-const forms = document.querySelector('form[name=filter]');
+const forms = document.querySelector('form[name=search]');
 
 forms.addEventListener('submit', function (e) {
     // Получаем данные из формы
@@ -33,7 +33,9 @@ var html = '\
 {{#publications}}\
     <tr>\
         <td>\
-            {{authors__military_rank}}\
+            {{#authors}}\
+                {{authors__military_rank}}\
+            {{/authors}}\
         </td>\
         <td>\
             {{authors}}\

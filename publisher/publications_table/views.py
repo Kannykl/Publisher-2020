@@ -1,6 +1,8 @@
+from django.db.models import Q
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from .models import Publication, Author
-from django.views.generic import CreateView, UpdateView, DeleteView
+from django.views.generic import CreateView, UpdateView, DeleteView, ListView
 from .forms import PublicationFilter, SearchPublications, PublicationCreateForm
 
 
@@ -87,6 +89,7 @@ def search_publications(request, start_publications):
                             return publications, form
             else:
                 return start_publications, form
+        return start_publications, form
 
 
 class AuthorCreateView(CreateView):
@@ -110,3 +113,27 @@ def create_publication(request):
     else:
         form = PublicationCreateForm()
     return render(request, 'publications_table/publication_create.html', {'form': form})
+
+
+class JsonSearchPublicationsView(ListView):
+    """Поиск записей по фамилии автора, названию статьи, изданию и номеру УК"""
+
+    def get_queryset(self):
+        if self.request.GET.get('search').isdigit():
+            queryset = Publication.objects.order_by('title').filter(
+                Q(uk_number=self.request.GET.get("search")) |
+                Q(edition=self.request.GET.get("search"))
+            ).distinct('title').values("title", "published_year", "uk_number", "authors", "authors__military_rank",
+                                       "edition", "authors__work_position", "type_of_publication", "range")
+        else:
+            queryset = Publication.objects.order_by('title').filter(
+                Q(title=self.request.GET.get("search")) |
+                Q(authors__surname__in=self.request.GET.getlist("search")) |
+                Q(edition=self.request.GET.get("search"))
+            ).distinct('title').values("title", "published_year", "uk_number", "authors", "authors__military_rank",
+                                       "edition", "authors__work_position", "type_of_publication", "range")
+        return queryset
+
+    def get(self, request, *args, **kwargs):
+        queryset = list(self.get_queryset())
+        return JsonResponse({"publications": queryset}, safe=False)
