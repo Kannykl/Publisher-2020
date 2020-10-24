@@ -5,21 +5,10 @@ from .models import Publication, Author
 class PublicationFilter(forms.Form):
     min_year = forms.IntegerField(label='c', required=False,)
     max_year = forms.IntegerField(label='по', required=False)
-    rank_options = (
-        ('рядовой', 'рядовой'),
-        ('лейтенант', 'лейтенант'),
-        ('старший лейтенант', 'старший лейтенант'),
-        ('капитан', 'капитан'),
-        ('майор', 'майор'),
-        ('подполковник', 'подполковник'),
-        ('полковник', 'полковник'),
-    )
     publication_options = (
         ('Статья', 'Статья'),
         ('Тезис', 'Тезис'),
     )
-    rank = forms.MultipleChoiceField(choices=rank_options, required=False, label='',
-                                     widget=forms.CheckboxSelectMultiple)
     type_of_publication = forms.MultipleChoiceField(choices=publication_options, required=False,
                                                     label='тип публикации', widget=forms.CheckboxSelectMultiple)
 
@@ -30,6 +19,14 @@ class SearchPublications(forms.Form):
 
 class PublicationCreateForm(forms.ModelForm):
     authors = forms.ModelMultipleChoiceField(Author.objects.all(), widget=forms.CheckboxSelectMultiple)
+
+    def save(self, commit=True):
+        b = super(PublicationCreateForm, self).save(commit=commit)
+        for i in range(len(self.cleaned_data['authors'])):
+            Publication.objects.get(uk_number=self.cleaned_data['uk_number'])\
+                .authors.add(self.cleaned_data['authors'][i])
+
+        b.save()
 
     class Meta:
         model = Publication

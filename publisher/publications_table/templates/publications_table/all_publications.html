@@ -14,9 +14,9 @@
 <table class="table" align="left">
   <thead>
     <tr>
-      <th scope="col"><a href="{% url 'sort' 1 %}">Звание</a></th>
-      <th scope="col"><a href="{% url 'sort' 2 %}">ФИО</a></th>
-      <th scope="col"><a href="{% url 'sort' 3 %}">Должность</a></th>
+      <th scope="col"><a>Звание</a></th>
+      <th scope="col"><a>ФИО</a></th>
+      <th scope="col"><a>Должность</a></th>
       <th scope="col"><a href="{% url 'sort' 4 %}">Название</a></th>
       <th scope="col"><a href="{% url 'sort' 5 %}">Издание</a></th>
       <th scope="col"><a href="{% url 'sort' 6 %}">Год публикации</a></th>
@@ -55,7 +55,7 @@
     {% endfor %}
   </tbody>
 </table>
-  <form action="{% url 'json_filter' %}" method="get" name="filter">
+  <form action="" method="get">
     {% render_field form.min_year class="form-control" placeholder="c"%}
     <br/>
     {% render_field form.max_year class="form-control" placeholder="по"%}

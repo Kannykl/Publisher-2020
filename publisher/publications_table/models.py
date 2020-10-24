@@ -11,6 +11,8 @@ class Author(models.Model):
     work_position = models.CharField(max_length=255, null=False, verbose_name="должность")
     military_rank = models.CharField(max_length=255, null=False, verbose_name="звание")
 
+    objects = models.Manager()
+
     def __str__(self):
         return "" + self.get_initials()
 
@@ -34,7 +36,7 @@ class Publication(models.Model):
         ('Статья', 'Статья',)
     )
 
-    authors = models.ManyToManyField(Author, verbose_name="авторы")
+    authors = models.ManyToManyField(Author, verbose_name="авторы", related_name='authors')
     title = models.CharField(max_length=256, verbose_name="название статьи", null=False, )
     type_of_publication = models.CharField(max_length=255, verbose_name="тип публикации",
                                            choices=TYPES_OF_PUBLICATIONS, )
