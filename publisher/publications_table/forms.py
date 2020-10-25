@@ -32,3 +32,7 @@ class PublicationCreateForm(forms.ModelForm):
         model = Publication
         fields = '__all__'
         exclude = ['authors']
+
+
+class ExportTableForm(forms.Form):
+    file_name = forms.CharField(max_length=255, label='', required=False)

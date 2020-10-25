@@ -3,18 +3,21 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from .models import Publication, Author
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView
-from .forms import PublicationFilter, SearchPublications, PublicationCreateForm
+from .forms import PublicationFilter, SearchPublications, PublicationCreateForm, ExportTableForm
+from .export import export_in_xls
 
 
 def show_all_publications(request, type_of_sort=0):
     """ Страница отображения всех записей"""
-    publications = sort(type_of_sort)
-    publications, form = filter_publications(request, publications)
-    publications, form2 = search_publications(request, publications)
+    start_publications = sort(type_of_sort)
+    filtered_publications, form = filter_publications(request, start_publications)
+    form2 = SearchPublications(request.GET)
+    form3 = export_table(filtered_publications, request)
     context = {
-        'publications': publications,
+        'publications': filtered_publications,
         'form': form,
         'form2': form2,
+        'form3': form3,
     }
     return render(request, "publications_table/all_publications.html", context)
 
@@ -70,28 +73,6 @@ def filter_publications(request, publications):
         return publications, form
 
 
-def search_publications(request, start_publications):
-    """ Поиск записей по названию, изданию или номеру УК"""
-    if request.method == 'GET':
-        form = SearchPublications(request.GET)
-        if form.is_valid():
-            if form.cleaned_data['search']:
-                publications = start_publications.filter(title=form.cleaned_data['search'])
-                if publications:
-                    return publications, form
-                else:
-                    publications = start_publications.filter(edition=form.cleaned_data['search'])
-                    if publications:
-                        return publications, form
-                    elif form.cleaned_data['search'].isdigit():
-                        publications = start_publications.filter(uk_number=form.cleaned_data['search'])
-                        if publications:
-                            return publications, form
-            else:
-                return start_publications, form
-        return start_publications, form
-
-
 class AuthorCreateView(CreateView):
     """ Добавление автора пользователем """
     model = Author
@@ -137,3 +118,16 @@ class JsonSearchPublicationsView(ListView):
     def get(self, request, *args, **kwargs):
         queryset = list(self.get_queryset())
         return JsonResponse({"publications": queryset}, safe=False)
+
+
+def export_table(publications, request):
+    """ Эскпорт в Excel таблицу"""
+    if request.method == 'GET':
+        form = ExportTableForm(request.GET)
+        if form.is_valid():
+            if form.cleaned_data['file_name']:
+                file_name = form.cleaned_data['file_name']
+                export_in_xls(publications, file_name)
+    else:
+        form = ExportTableForm()
+    return form

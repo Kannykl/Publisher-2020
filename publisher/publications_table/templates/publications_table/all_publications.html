@@ -66,6 +66,10 @@
   <input type="submit" value="Показать результаты">
 </form>
 </div>
+   <form action="" method="get">
+   {% render_field form3.file_name  placeholder="файл"%}
+  <input type="submit" value="Экспорт">
+ </form>
 <script src="http://twitter.github.com/hogan.js/builds/3.0.1/hogan-3.0.1.js"></script>
 <script src="{% static 'js/script.js' %}"></script>
 </body>
