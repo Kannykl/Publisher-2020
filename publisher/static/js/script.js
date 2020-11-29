@@ -37,8 +37,10 @@ var html = '\
                 {{authors__military_rank}}\
             {{/authors}}\
         </td>\
-        <td>\
-            {{authors}}\
+         <td>\
+            {{#authors}}\
+                {{authors__military_rank}}\
+            {{/authors}}\
         </td>\
         <td>\
             {{authors__work_position}}\

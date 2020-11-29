@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '$1x^eu0cq7ll8sl#g9z-967!!7g$5yf$okijw^4t6dw_9e7613'
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "+ownf%0op*r)rytn0^u38y7sbp_w6nf-uf9cbtm0sk2o#b1^bj")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -89,16 +89,15 @@ WSGI_APPLICATION = 'publisher.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'publisher',
-        'HOST': '127.0.0.1',
-        'USER': 'postgres',
-        'PORT': '5432',
-        'PASSWORD': '123'
+    "default": {
+        "ENGINE": os.getenv("DJANGO_DB_ENGINE", 'django.db.backends.sqlite3'),
+        "NAME": os.getenv("DJANGO_DB_DATABASE", os.path.join(BASE_DIR, 'db.sqlite')),
+        "USER": os.getenv("DJANGO_DB_USER"),
+        "PASSWORD": os.getenv("DJANGO_DB_PASSWORD"),
+        "HOST": os.getenv("DJANGO_DB_HOST"),
+        "PORT": os.getenv("DJANGO_DB_PORT"),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -135,5 +134,3 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
-
-STATIC_URL = '/static/'

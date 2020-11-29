@@ -14,9 +14,9 @@ class Author(models.Model):
     objects = models.Manager()
 
     def __str__(self):
-        return "" + self.get_initials()
+        return "" + self.initials()
 
-    def get_initials(self):
+    def initials(self):
         """ Получаем инициалы автора статей"""
         initials = self.surname + ' ' + self.name[:1] + '.' + self.patronymic[:1] + '.'
         return initials
@@ -51,6 +51,9 @@ class Publication(models.Model):
     objects = models.Manager()
 
     def __str__(self):
+        return self.title
+
+    def __repr__(self):
         return self.title
 
     class Meta:

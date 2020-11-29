@@ -10,12 +10,12 @@ from .export import export_in_xls
 def show_all_publications(request, type_of_sort=0):
     """ Страница отображения всех записей"""
     start_publications = sort(type_of_sort)
-    filtered_publications, form = filter_publications(request, start_publications)
+    filtered_publications, form1 = filter_publications(request, start_publications)
     form2 = SearchPublications(request.GET)
     form3 = export_table(filtered_publications, request)
     context = {
         'publications': filtered_publications,
-        'form': form,
+        'form': form1,
         'form2': form2,
         'form3': form3,
     }
@@ -45,6 +45,9 @@ def sort(type_of_sort: int):
     """ Сортирует записи по определенному полю"""
     dictionary = {
         '0': Publication.objects.all(),
+        '1': Publication.objects.all().order_by('authors'),
+        '2': Publication.objects.all(),
+        '3': Publication.objects.all(),
         '4': Publication.objects.all().order_by('title'),
         '5': Publication.objects.all().order_by('edition'),
         '6': Publication.objects.all().order_by('-published_year'),
@@ -104,20 +107,24 @@ class JsonSearchPublicationsView(ListView):
             queryset = Publication.objects.order_by('title').filter(
                 Q(uk_number=self.request.GET.get("search")) |
                 Q(edition=self.request.GET.get("search"))
-            ).distinct('title').values("title", "published_year", "uk_number", "authors", "authors__military_rank",
-                                       "edition", "authors__work_position", "type_of_publication", "range")
+            ).distinct('title').values("title", "published_year", "uk_number", "authors__military_rank",
+                                       "authors__surname", "authors__name", "authors__patronymic",
+                                       "edition", "authors__work_position", "type_of_publication", "range", "authors"
+                                       )
         else:
             queryset = Publication.objects.order_by('title').filter(
                 Q(title=self.request.GET.get("search")) |
                 Q(authors__surname__in=self.request.GET.getlist("search")) |
                 Q(edition=self.request.GET.get("search"))
-            ).distinct('title').values("title", "published_year", "uk_number", "authors", "authors__military_rank",
-                                       "edition", "authors__work_position", "type_of_publication", "range")
+            ).distinct('title').values("title", "published_year", "uk_number", "authors__military_rank",
+                                       "authors__surname", "authors__name", "authors__patronymic",
+                                       "edition", "authors__work_position", "type_of_publication", "range", "authors"
+                                       )
         return queryset
 
     def get(self, request, *args, **kwargs):
         queryset = list(self.get_queryset())
-        return JsonResponse({"publications": queryset}, safe=False)
+        return JsonResponse({"publications": queryset})
 
 
 def export_table(publications, request):

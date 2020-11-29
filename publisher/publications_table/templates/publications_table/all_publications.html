@@ -6,15 +6,20 @@
 
 <body>
 <div class="wrapper">
-    <form action="{% url 'json_search' %}" method="get" name="search">
+  <form action="{% url 'json_search' %}" method="get" name="search">
     {% render_field form2.search class="form-control" placeholder="Поиск"%}
     <br/>
     <input type="submit" value="Найти">
   </form>
+  <form action="" method="get">
+    {% render_field form3.file_name  class="form-control" placeholder="название файла"%}
+    <br/>
+    <input type="submit" value="Экспорт">
+  </form>
 <table class="table" align="left">
   <thead>
     <tr>
-      <th scope="col"><a>Звание</a></th>
+      <th scope="col"><a href="{% url 'sort' 1 %}">Звание</a></th>
       <th scope="col"><a>ФИО</a></th>
       <th scope="col"><a>Должность</a></th>
       <th scope="col"><a href="{% url 'sort' 4 %}">Название</a></th>
@@ -31,17 +36,17 @@
         <td>
         {% for author in publication.authors.all%}
           {{author.military_rank}}
-          {% endfor %}
+        {% endfor %}
         </td>
          <td>
         {% for author in publication.authors.all%}
-          {{author.get_initials}}
-           {% endfor %}
+          {{author.initials}}
+        {% endfor %}
         </td>
          <td>
         {% for author in publication.authors.all%}
           {{author.work_position}}
-          {% endfor %}
+        {% endfor %}
         </td>
         <td>{{publication.title}}</td>
         <td>{{publication.edition}}</td>
@@ -56,6 +61,7 @@
   </tbody>
 </table>
   <form action="" method="get">
+    <p>Год издания:</p>
     {% render_field form.min_year class="form-control" placeholder="c"%}
     <br/>
     {% render_field form.max_year class="form-control" placeholder="по"%}
@@ -66,10 +72,6 @@
   <input type="submit" value="Показать результаты">
 </form>
 </div>
-   <form action="" method="get">
-   {% render_field form3.file_name  placeholder="файл"%}
-  <input type="submit" value="Экспорт">
- </form>
 <script src="http://twitter.github.com/hogan.js/builds/3.0.1/hogan-3.0.1.js"></script>
 <script src="{% static 'js/script.js' %}"></script>
 </body>
