@@ -26,6 +26,8 @@
 <h3>Установка</h3>
 
 ```
+# Убедитесь, что активировано виртуальное окружение с python 3.6.9
+
 git clone https://gitwork.ru/Kanny/publisher.git # копировать проект локально
 pip install -r requirements.txt # установка зависимостей
 python manage.py migrate # миграция (подготовка) базы данны
