@@ -1,14 +1,11 @@
-from django.test import TestCase
 import pytest
-from .models import Publication
+import django
+from publisher.publications_table.models import Publication
 
-# @pytest.mark.django_db
-# def test_create_publication(create_record):
-#
-#     """Test create_record должен повлиять на publication.objects.count()"""
-#     record = create_record
-#
+django.setup()
 
 
-def test_publications_equals():
-    assert 1 == 1
+@pytest.mark.django_db
+def test_create_publication():
+    assert Publication.objects.count() == 0
+

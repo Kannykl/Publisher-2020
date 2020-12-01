@@ -5,6 +5,7 @@ from .models import Publication, Author
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView
 from .forms import PublicationFilter, SearchPublications, PublicationCreateForm, ExportTableForm
 from .export import export_in_xls
+from .authorization import check_user
 
 
 def show_all_publications(request, type_of_sort=0):
@@ -13,11 +14,13 @@ def show_all_publications(request, type_of_sort=0):
     filtered_publications, form1 = filter_publications(request, start_publications)
     form2 = SearchPublications(request.GET)
     form3 = export_table(filtered_publications, request)
+    user_info = check_user(request)
     context = {
         'publications': filtered_publications,
         'form': form1,
         'form2': form2,
         'form3': form3,
+        'user_info': user_info,
     }
     return render(request, "publications_table/all_publications.html", context)
 
