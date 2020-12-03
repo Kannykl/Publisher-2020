@@ -36,6 +36,6 @@ python manage.py migrate # миграция (подготовка) базы да
 <h3>Запуск</h3>
 
 ```
-python manage.py runserver # запуск проекта на http://127.0.0.1:8000/all_publications/
+python manage.py runserver # запуск проекта на http://127.0.0.1:8000/publisher/all_publications/
 ```
 

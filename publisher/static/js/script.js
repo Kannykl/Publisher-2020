@@ -33,20 +33,7 @@ var html = '\
 {{#publications}}\
     <tr>\
         <td>\
-            {{#authors}}\
-                {{authors__military_rank}}\
-            {{/authors}}\
-        </td>\
-         <td>\
-            {{#authors}}\
-                {{authors__military_rank}}\
-            {{/authors}}\
-        </td>\
-        <td>\
-            {{authors__work_position}}\
-        </td>\
-        <td>\
-            {{title}}\
+            <a href="/publisher/publication_info/{{id}}">{{title}}</a>\
         </td>\
         <td>\
             {{edition}}\

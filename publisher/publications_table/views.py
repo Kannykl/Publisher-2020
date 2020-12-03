@@ -14,13 +14,11 @@ def show_all_publications(request, type_of_sort=0):
     filtered_publications, form1 = filter_publications(request, start_publications)
     form2 = SearchPublications(request.GET)
     form3 = export_table(filtered_publications, request)
-    user_info = check_user(request)
     context = {
         'publications': filtered_publications,
         'form': form1,
         'form2': form2,
         'form3': form3,
-        'user_info': user_info,
     }
     return render(request, "publications_table/all_publications.html", context)
 
@@ -31,7 +29,7 @@ class PublicationUpdateView(UpdateView):
     fields = '__all__'
     template_name = 'publications_table/publication_update.html'
     context_object_name = 'publication'
-    success_url = '/all_publications/'
+    success_url = '/publisher/all_publications/'
 
     def form_valid(self, form):
         return super().form_valid(form)
@@ -41,16 +39,13 @@ class PublicationDeleteView(DeleteView):
     """ Страница удаления записи из таблицы """
     model = Publication
     template_name = 'publications_table/publication_delete.html'
-    success_url = '/all_publications/'
+    success_url = '/publisher/all_publications/'
 
 
 def sort(type_of_sort: int):
     """ Сортирует записи по определенному полю"""
     dictionary = {
         '0': Publication.objects.all(),
-        '1': Publication.objects.all().order_by('authors'),
-        '2': Publication.objects.all(),
-        '3': Publication.objects.all(),
         '4': Publication.objects.all().order_by('title'),
         '5': Publication.objects.all().order_by('edition'),
         '6': Publication.objects.all().order_by('-published_year'),
@@ -84,7 +79,7 @@ class AuthorCreateView(CreateView):
     model = Author
     template_name = 'publications_table/author_create.html'
     fields = '__all__'
-    success_url = '/create_publication/'
+    success_url = '/publisher/create_publication/'
 
     def form_valid(self, form):
         return super().form_valid(form)
@@ -96,7 +91,7 @@ def create_publication(request):
         form = PublicationCreateForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('/all_publications/')
+            return redirect('/publisher/all_publications/')
     else:
         form = PublicationCreateForm()
     return render(request, 'publications_table/publication_create.html', {'form': form})
@@ -110,19 +105,17 @@ class JsonSearchPublicationsView(ListView):
             queryset = Publication.objects.order_by('title').filter(
                 Q(uk_number=self.request.GET.get("search")) |
                 Q(edition=self.request.GET.get("search"))
-            ).distinct('title').values("title", "published_year", "uk_number", "authors__military_rank",
-                                       "authors__surname", "authors__name", "authors__patronymic",
-                                       "edition", "authors__work_position", "type_of_publication", "range", "authors"
-                                       )
+            ).distinct().values("title", "published_year", "uk_number",
+                                "edition", "type_of_publication", "range", "id"
+                                )
         else:
             queryset = Publication.objects.order_by('title').filter(
                 Q(title=self.request.GET.get("search")) |
                 Q(authors__surname__in=self.request.GET.getlist("search")) |
                 Q(edition=self.request.GET.get("search"))
-            ).distinct('title').values("title", "published_year", "uk_number", "authors__military_rank",
-                                       "authors__surname", "authors__name", "authors__patronymic",
-                                       "edition", "authors__work_position", "type_of_publication", "range", "authors"
-                                       )
+            ).distinct().values("title", "published_year", "uk_number",
+                                "edition", "type_of_publication", "range", "id"
+                                )
         return queryset
 
     def get(self, request, *args, **kwargs):
@@ -141,3 +134,13 @@ def export_table(publications, request):
     else:
         form = ExportTableForm()
     return form
+
+
+def get_publication_info(request, id: int):
+    """Информация о записи в таблице"""
+    publication = Publication.objects.get(pk=id)
+    print(publication)
+    context = {
+        "publication": publication,
+    }
+    return render(request, "publications_table/publication_info.html", context)

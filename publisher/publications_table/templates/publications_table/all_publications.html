@@ -16,12 +16,9 @@
     <br/>
     <input type="submit" value="Экспорт">
   </form>
-<table class="table" align="left">
+<table class="table table-borderless" align="left">
   <thead>
     <tr>
-      <th scope="col"><a href="{% url 'sort' 1 %}">Звание</a></th>
-      <th scope="col"><a>ФИО</a></th>
-      <th scope="col"><a>Должность</a></th>
       <th scope="col"><a href="{% url 'sort' 4 %}">Название</a></th>
       <th scope="col"><a href="{% url 'sort' 5 %}">Издание</a></th>
       <th scope="col"><a href="{% url 'sort' 6 %}">Год публикации</a></th>
@@ -33,29 +30,12 @@
   <tbody>
     {% for publication in publications%}
       <tr>
-        <td>
-        {% for author in publication.authors.all%}
-          {{author.military_rank}}
-        {% endfor %}
-        </td>
-         <td>
-        {% for author in publication.authors.all%}
-          {{author.initials}}
-        {% endfor %}
-        </td>
-         <td>
-        {% for author in publication.authors.all%}
-          {{author.work_position}}
-        {% endfor %}
-        </td>
-        <td>{{publication.title}}</td>
+        <td><a href="{% url 'info' publication.id %}">{{publication.title}}</a></td>
         <td>{{publication.edition}}</td>
         <td>{{publication.published_year}}</td>
         <td>{{publication.type_of_publication}}</td>
         <td>{{publication.range}}</td>
         <td>{{publication.uk_number}}</td>
-        <td><a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'publication-update' publication.id %}">Update</a></td>
-        <td><a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'publication-delete' publication.id %}">Delete</a></td>
       </tr>
     {% endfor %}
   </tbody>

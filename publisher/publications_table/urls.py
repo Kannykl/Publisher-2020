@@ -6,6 +6,7 @@ from .views import (
     JsonSearchPublicationsView,
     create_publication,
     AuthorCreateView,
+    get_publication_info,
 )
 
 urlpatterns = [
@@ -19,4 +20,5 @@ urlpatterns = [
 
     path('update_publication/<int:pk>', PublicationUpdateView.as_view(), name='publication-update'),
     path('delete_publication/<int:pk>', PublicationDeleteView.as_view(), name='publication-delete'),
+    path('publication_info/<int:id>', get_publication_info, name='info'),
 ]

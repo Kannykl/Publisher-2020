@@ -1,0 +1,20 @@
+{% extends "publications_table/main.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+{% load widget_tweaks %}
+<main role="main" class="container">
+<div class="content-section">
+    <h1 class="display-6">{{publication.title}}({{publication.published_year}}г.)</h1>
+        <small>
+        {{publication.edition}}
+            {{ publication.type_of_publication }}
+    </small>
+    <br>
+         {% for author in publication.authors.all%}
+               <p>{{author.initials}}</p>
+        {% endfor %}
+    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'publication-update' publication.id %}">Редактировать</a>
+    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'publication-delete' publication.id %}">Удалить</a>
+    </div>
+</main>
+{% endblock content %}
