@@ -39,7 +39,7 @@ class Publication(models.Model):
     authors = models.ManyToManyField(Author, verbose_name="авторы", related_name='authors')
     title = models.CharField(max_length=256, verbose_name="название статьи", null=False, )
     type_of_publication = models.CharField(max_length=255, verbose_name="тип публикации",
-                                           choices=TYPES_OF_PUBLICATIONS, )
+                                           choices=TYPES_OF_PUBLICATIONS,)
     edition = models.CharField(max_length=255, verbose_name="издание", null=False)
     published_year = models.PositiveIntegerField(validators=
                                                  [MaxValueValidator(datetime.now().year),

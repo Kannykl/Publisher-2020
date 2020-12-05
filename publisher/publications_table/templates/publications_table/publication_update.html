@@ -7,7 +7,7 @@
         <form method="POST">
             {% csrf_token %}
             <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Информация о "{{ object.title }}"</legend>
+                <legend class="border-bottom mb-4">Информация о "{{ publication.title}}"</legend>
                 {% render_field form.title class="form-control" placeholder="Название статьи" %}
                 <br/>
                 {% render_field form.authors class="list" %}

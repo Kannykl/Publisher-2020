@@ -1,9 +1,9 @@
 from django.db.models import Q
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Publication, Author
-from django.views.generic import CreateView, UpdateView, DeleteView, ListView
-from .forms import PublicationFilter, SearchPublications, PublicationCreateForm, ExportTableForm
+from django.views.generic import CreateView, DeleteView, ListView
+from .forms import PublicationFilter, SearchPublications, PublicationCreateForm, ExportTableForm, PublicationUpdateForm
 from .export import export_in_xls
 from .authorization import check_user
 
@@ -21,18 +21,6 @@ def show_all_publications(request, type_of_sort=0):
         'form3': form3,
     }
     return render(request, "publications_table/all_publications.html", context)
-
-
-class PublicationUpdateView(UpdateView):
-    """ Страница редактирования существующей записи в таблице"""
-    model = Publication
-    fields = '__all__'
-    template_name = 'publications_table/publication_update.html'
-    context_object_name = 'publication'
-    success_url = '/publisher/all_publications/'
-
-    def form_valid(self, form):
-        return super().form_valid(form)
 
 
 class PublicationDeleteView(DeleteView):
@@ -97,6 +85,19 @@ def create_publication(request):
     return render(request, 'publications_table/publication_create.html', {'form': form})
 
 
+def update_publication(request, pk):
+    post = get_object_or_404(Publication, id=pk)
+    if request.method == "POST":
+        form = PublicationUpdateForm(data=request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect(f'/publisher/publication_info/{post.id}')
+    else:
+        form = PublicationUpdateForm(instance=post)
+    return render(request, 'publications_table/publication_update.html', {'form': form,
+                                                                          'publication': post})
+
+
 class JsonSearchPublicationsView(ListView):
     """Поиск записей по фамилии автора, названию статьи, изданию и номеру УК"""
 
@@ -139,7 +140,6 @@ def export_table(publications, request):
 def get_publication_info(request, id: int):
     """Информация о записи в таблице"""
     publication = Publication.objects.get(pk=id)
-    print(publication)
     context = {
         "publication": publication,
     }

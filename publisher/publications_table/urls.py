@@ -1,12 +1,12 @@
 from django.urls import path
 from .views import (
     show_all_publications,
-    PublicationUpdateView,
     PublicationDeleteView,
     JsonSearchPublicationsView,
     create_publication,
     AuthorCreateView,
     get_publication_info,
+    update_publication
 )
 
 urlpatterns = [
@@ -18,7 +18,7 @@ urlpatterns = [
     path('create_author/', AuthorCreateView.as_view(), name='create-author'),
     path('create_publication/', create_publication, name='publication-create'),
 
-    path('update_publication/<int:pk>', PublicationUpdateView.as_view(), name='publication-update'),
+    path('update_publication/<int:pk>', update_publication, name='publication-update'),
     path('delete_publication/<int:pk>', PublicationDeleteView.as_view(), name='publication-delete'),
     path('publication_info/<int:id>', get_publication_info, name='info'),
 ]
