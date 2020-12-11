@@ -19,12 +19,6 @@ class SearchPublications(forms.Form):
 
 class PublicationCreateForm(forms.ModelForm):
     authors = forms.ModelMultipleChoiceField(Author.objects.all(), widget=forms.CheckboxSelectMultiple)
-    publication_options = (
-        ('Статья', 'Статья'),
-        ('Тезис', 'Тезис'),
-    )
-    type_of_publication = forms.CharField(max_length=255, required=False)
-    type_of_publication_selectable = forms.ChoiceField(choices=publication_options)
 
     def save(self, commit=True):
         b = super(PublicationCreateForm, self).save(commit=commit)
@@ -36,7 +30,7 @@ class PublicationCreateForm(forms.ModelForm):
     class Meta:
         model = Publication
         fields = '__all__'
-        exclude = ['authors', 'type_of_publication']
+        exclude = ['authors']
 
 
 class ExportTableForm(forms.Form):
@@ -44,14 +38,14 @@ class ExportTableForm(forms.Form):
 
 
 class PublicationUpdateForm(forms.ModelForm):
-    authors = forms.ModelMultipleChoiceField(Author.objects.all(), widget=forms.CheckboxSelectMultiple,)
+    authors = forms.ModelMultipleChoiceField(Author.objects.all(), widget=forms.CheckboxSelectMultiple, )
 
     def __init__(self, *args, **kwargs):
         super(PublicationUpdateForm, self).__init__(*args, **kwargs)
         publication = Publication.objects.get(uk_number=self.initial['uk_number'])
         self.fields["authors"].initial = (
             Author.objects.all().filter(authors=publication.id)
-            )
+        )
 
     def save(self, commit=True):
         b = super(PublicationUpdateForm, self).save(commit=commit)

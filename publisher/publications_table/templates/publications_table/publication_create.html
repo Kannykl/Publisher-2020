@@ -13,7 +13,6 @@
                 {% render_field form.authors class="list" %}
                  <a class="nav-link disabled font-italic" href="{% url 'create-author' %}">добавить автора</a>
                 <br/>
-                {% render_field form.type_of_publication_selectable class="custom-select" %}
                 {% render_field form.type_of_publication class="form-control" placeholder="тип публикации" %}
                 <br/><br/>
                 {% render_field form.edition class="form-control" placeholder="Издание"%}

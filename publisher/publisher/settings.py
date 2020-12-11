@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "+ownf%0op*r)rytn0^u38y7sbp_w6nf-uf9cbtm0sk2o#b1^bj")
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "+ownf%0op*r)r4gfdg4n0^u38y7sbp_w6nf-uf9cbtm0sk2o#b1^bj")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -91,7 +91,7 @@ WSGI_APPLICATION = 'publisher.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": os.getenv("DJANGO_DB_ENGINE", 'django.db.backends.sqlite3'),
-        "NAME": os.getenv("DJANGO_DB_DATABASE", os.path.join(BASE_DIR, 'db.sqlite')),
+        "NAME": os.getenv("DJANGO_DB_DATABASE", os.path.join(BASE_DIR, 'db.sqlite3')),
         "USER": os.getenv("DJANGO_DB_USER"),
         "PASSWORD": os.getenv("DJANGO_DB_PASSWORD"),
         "HOST": os.getenv("DJANGO_DB_HOST"),
@@ -117,47 +117,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
-        },
-    },
-    'filters': {
-        'require_debug_true': {
-            '()': 'django.utils.log.RequireDebugTrue',
-        },
-    },
-    'handlers': {
-        'console': {
-            'level': 'INFO',
-            'filters': ['require_debug_true'],
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose'
-        },
-        'file': {
-            'level': 'ERROR',
-            'filters': ['require_debug_true'],
-            'class': 'logging.FileHandler',
-            'filename': f'{BASE_DIR}/.log',
-            'formatter': 'verbose'
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'propagate': True,
-        },
-        'django.request': {
-            'handlers': ['file'],
-            'level': 'ERROR',
-            'propagate': False,
-        }
-    },
-}
 
 
 # Internationalization
