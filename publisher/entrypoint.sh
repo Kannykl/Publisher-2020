@@ -11,6 +11,7 @@ then
     echo "DB started"
 fi
 
+python manage.py makemigrations publications_table
 python manage.py migrate
 python manage.py collectstatic --no-input --clear
 
