@@ -1,6 +1,11 @@
-__pycache__/
 .idea/
-publisher/.pytest_cache
+__pycache__/
+publisher/db.sqlite3
+media/*
+publisher/.env
+staticfiles/
+.log
 .directory
-publisher/db.sqlite
-publisher/.log
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py

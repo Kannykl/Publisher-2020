@@ -39,3 +39,10 @@ python manage.py migrate # миграция (подготовка) базы да
 python manage.py runserver # запуск проекта на http://127.0.0.1:8000/publisher/all_publications/
 ```
 
+<h3>Docker</h3>
+
+```
+chmod +x entrypoint.sh # cделать файл entrypoint.sh исполняемым
+docker-compose -f docker-compose.yml up --build
+```
+
