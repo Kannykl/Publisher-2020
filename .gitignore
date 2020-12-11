@@ -6,4 +6,4 @@ publisher/.env
 staticfiles/
 .log
 .directory
-publisher/publications_table/migrations
+publisher/publications_table/migrations/*
