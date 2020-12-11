@@ -6,6 +6,4 @@ publisher/.env
 staticfiles/
 .log
 .directory
-**/migrations/**
-!**/migrations
-!**/migrations/__init__.py
+publisher/publications_table/migrations
