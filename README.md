@@ -30,6 +30,7 @@
 
 git clone https://gitwork.ru/Kanny/publisher.git # копировать проект локально
 pip install -r requirements.txt # установка зависимостей
+python manage.py makemigrations publications_table # подготовка базы данных
 python manage.py migrate # миграция (подготовка) базы данны
 ```
 
