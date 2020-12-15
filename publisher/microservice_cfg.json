@@ -1,7 +1,7 @@
 {
     "service_name": "publisher",
     "app_port": "8000",
-    "default_url": "/publisher/all_publications/",
+    "default_url": "/publisher/",
     "curators": "[anetto, barabass]",
     "developer": "kanny",
     "static": "/home/kanny/staticfiles",
