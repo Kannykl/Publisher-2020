@@ -27,7 +27,7 @@ class PublicationDeleteView(DeleteView):
     """ Страница удаления записи из таблицы """
     model = Publication
     template_name = 'publications_table/publication_delete.html'
-    success_url = '/publisher/all_publications/'
+    success_url = '/publisher/'
 
 
 def sort(type_of_sort: int):
@@ -79,7 +79,7 @@ def create_publication(request):
         form = PublicationCreateForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('/publisher/all_publications/')
+            return redirect('/publisher/')
     else:
         form = PublicationCreateForm()
     return render(request, 'publications_table/publication_create.html', {'form': form})

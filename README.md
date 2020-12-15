@@ -28,6 +28,6 @@
 
 ```
 chmod +x entrypoint.sh # cделать файл entrypoint.sh исполняемым
-docker-compose -f docker-compose.yml up --build
+docker-compose -f docker-compose.yml up -d  --build # начальная страница 127.0.0.1:8000/publisher/
 ```
 

@@ -10,8 +10,8 @@ from .views import (
 )
 
 urlpatterns = [
-    path('all_publications/', show_all_publications, name='all'),
-    path('all_publications/<int:type_of_sort>', show_all_publications, name='sort'),
+    path('', show_all_publications, name='all'),
+    path('<int:type_of_sort>', show_all_publications, name='sort'),
 
     path('json-search/', JsonSearchPublicationsView.as_view(), name='json_search'),
 
