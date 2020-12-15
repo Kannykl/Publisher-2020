@@ -23,22 +23,6 @@
 - Python 3.6.9
 - Django 3
 
-<h3>Установка</h3>
-
-```
-# Убедитесь, что активировано виртуальное окружение с python 3.6.9
-
-git clone https://gitwork.ru/Kanny/publisher.git # копировать проект локально
-pip install -r requirements.txt # установка зависимостей
-python manage.py makemigrations publications_table # подготовка базы данных
-python manage.py migrate # миграция (подготовка) базы данны
-```
-
-<h3>Запуск</h3>
-
-```
-python manage.py runserver # запуск проекта на http://127.0.0.1:8000/publisher/all_publications/
-```
 
 <h3>Docker</h3>
 
