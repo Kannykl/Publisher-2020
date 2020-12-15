@@ -52,6 +52,21 @@
   <input type="submit" value="Показать результаты">
 </form>
 </div>
+<nav class="pagination justify-content-center" aria-label="...">
+  <ul class="pagination">
+    {% for n in publications.paginator.page_range %}
+        {% if publications.number == n %}
+            <li class="page-item active" aria-current="page">
+                  <span class="page-link" href="?page={{n}}">{{n}}</span>
+                </li>
+        {% elif n > publications.number|add:-2 and n < publications.number|add:2%}
+          <li class="page-item">
+            <a class="page-link" href="?page={{n}}">{{n}}</a>
+          </li>
+        {% endif %}
+    {% endfor %}
+  </ul>
+</nav>
 <script src="http://twitter.github.com/hogan.js/builds/3.0.1/hogan-3.0.1.js"></script>
 <script src="{% static 'js/script.js' %}"></script>
 </body>
