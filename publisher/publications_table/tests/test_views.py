@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.test import RequestFactory
 from django.test import TestCase
 from mixer.backend.django import mixer
-from publications_table.models import Publication, Author
+from publications_table.models import Publication, Author, Table
 from publications_table.views import (
     show_all_publications,
     AuthorCreateView,
@@ -13,7 +13,8 @@ from publications_table.views import (
     sort,
     filter_publications,
     JsonSearchPublicationsView,
-    get_publication_info
+    get_publication_info,
+    export_table,
 )
 import json
 
@@ -240,3 +241,19 @@ class TestViews(TestCase):
         request = RequestFactory().get(path)
         response = get_publication_info(request, id=publication.id)
         assert response.status_code == 200
+
+    def test_export_table(self):
+        """ Проверка работы экспорта таблицы"""
+        mixer.blend('publications_table.Author', name='TestName', surname='TestSurname',
+                    patronymic='TestPatronymic', work_position='TestWorkPosition', military_rank='TestMilitaryRank')
+        publication = mixer.blend('publications_table.Publication', title='Статья2', published_year=2019,
+                                  authors=Author.objects.get(name='TestName').id,
+                                  type_of_publication='Статья', edition='издание2', range='1-23', uk_number=1235)
+
+        path = reverse('all')
+        request = RequestFactory().get(path, data={
+            'file_name': '1234.xls'
+        })
+        export_table(Publication.objects.all(), request)
+        assert Table.objects.count() == 1
+
