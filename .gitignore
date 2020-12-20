@@ -1,7 +1,6 @@
 .idea/
 __pycache__/
 publisher/db.sqlite3
-media/*
 staticfiles/
 .log
 .directory
