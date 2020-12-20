@@ -1,5 +1,6 @@
 import pytest
 from django.contrib.auth.models import AnonymousUser
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.test import RequestFactory
 from django.test import TestCase
@@ -30,24 +31,6 @@ class TestViews(TestCase):
         response = show_all_publications(request)
         assert response.status_code == 200
 
-    def test_success_create_author(self):
-        """Успешное создание автора"""
-        assert list(Author.objects.all()) == list(Author.objects.none())
-        path = reverse('create-author')
-        request = RequestFactory().post(path, data={
-            'name': 'TestName',
-            'surname': 'TestSurname',
-            'patronymic': 'TestPatronymic',
-            'work_position': 'TestWorkPosition',
-            'military_rank': 'TestMilitaryRank',
-        })
-        request.user = AnonymousUser()
-        response = AuthorCreateView.as_view()(request)
-        assert response.status_code == 302
-        assert '/publisher/create_publication/' in response.url
-        assert Author.objects.get(pk=1).name == 'TestName'
-        assert Author.objects.count() == 1
-
     def test_success_create_publication(self):
         """Успешное создание публикации"""
         assert Publication.objects.count() == 0
@@ -69,6 +52,24 @@ class TestViews(TestCase):
         assert 'publisher/' in response.url
         assert Publication.objects.count() == 1
         assert Publication.objects.all()[0].title == 'Статья1'
+
+    def test_success_create_author(self):
+        """Успешное создание автора"""
+        assert list(Author.objects.all()) == list(Author.objects.none())
+        path = reverse('create-author')
+        request = RequestFactory().post(path, data={
+            'name': 'TestName',
+            'surname': 'TestSurname',
+            'patronymic': 'TestPatronymic',
+            'work_position': 'TestWorkPosition',
+            'military_rank': 'TestMilitaryRank',
+        })
+        request.user = AnonymousUser()
+        response = AuthorCreateView.as_view()(request)
+        assert response.status_code == 302
+        assert '/publisher/create_publication/' in response.url
+        assert Author.objects.all()[0].name == 'TestName'
+        assert Author.objects.count() == 1
 
     def test_success_delete_publication(self):
         """Успешное удаление публикации"""
