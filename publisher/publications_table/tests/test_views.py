@@ -5,7 +5,14 @@ from django.test import RequestFactory
 from django.test import TestCase
 from mixer.backend.django import mixer
 from publications_table.models import Publication, Author
-from publications_table.views import show_all_publications, AuthorCreateView, create_publication, update_publication
+from publications_table.views import (
+    show_all_publications,
+    AuthorCreateView,
+    create_publication,
+    update_publication,
+    sort,
+    filter_publications,
+)
 
 
 @pytest.mark.django_db
@@ -61,8 +68,8 @@ class TestViews(TestCase):
 
     def test_success_delete_publication(self):
         """Успешное удаление публикации"""
-        publication = mixer.blend('publications_table.Publication', title='Статья1', published_year='2020',
-                                  type_of_publication='Тезис', edition='издание', range='1-2', uk_number='123')
+        publication = mixer.blend('publications_table.Publication', title='Статья1', published_year=2020,
+                                  type_of_publication='Тезис', edition='издание', range='1-2', uk_number=123)
         assert Publication.objects.count() == 1
 
         response = self.client.post(reverse('publication-delete', kwargs={'pk': publication.pk}))
@@ -75,8 +82,8 @@ class TestViews(TestCase):
         assert Publication.objects.count() == 0
         mixer.blend('publications_table.Author', name='TestName', surname='TestSurname',
                     patronymic='TestPatronymic', work_position='TestWorkPosition', military_rank='TestMilitaryRank')
-        publication = mixer.blend('publications_table.Publication', title='СтатьяДоИзменения', published_year='2020',
-                                  type_of_publication='Тезис', edition='издание', range='1-2', uk_number='123')
+        publication = mixer.blend('publications_table.Publication', title='СтатьяДоИзменения', published_year=2020,
+                                  type_of_publication='Тезис', edition='издание', range='1-2', uk_number=123)
         path = reverse('publication-update', kwargs={'pk': publication.id})
         request = RequestFactory().post(path, data={
             'authors': Author.objects.get(name='TestName').id,
@@ -93,3 +100,71 @@ class TestViews(TestCase):
         assert f'/publisher/publication_info/{publication.id}' in response.url
         assert Publication.objects.count() == 1
         assert Publication.objects.all()[0].title == 'СтатьяПослеИзменения'
+
+    def test_sort(self):
+        """Проверка сортировки публикаций"""
+        publication1 = mixer.blend('publications_table.Publication', title='Статья1', published_year=2020,
+                                   type_of_publication='Тезис', edition='издание2', range='1-2', uk_number=987)
+        publication2 = mixer.blend('publications_table.Publication', title='Статья2', published_year=2019,
+                                   type_of_publication='Статья', edition='издание1', range='1-23', uk_number=123)
+        ordered_publications = sort(1)
+        assert list(ordered_publications) == [publication1, publication2]
+        ordered_publications = sort(2)
+        assert list(ordered_publications) == [publication2, publication1]
+        ordered_publications = sort(3)
+        assert list(ordered_publications) == [publication1, publication2]
+        ordered_publications = sort(4)
+        assert list(ordered_publications) == [publication2, publication1]
+        ordered_publications = sort(5)
+        assert list(ordered_publications) == [publication1, publication2]
+        ordered_publications = sort(6)
+        assert list(ordered_publications) == [publication2, publication1]
+
+    def test_filter_publications(self):
+        """Проверка фильтрации публикаций"""
+        publication1 = mixer.blend('publications_table.Publication', title='Статья1', published_year=2020,
+                                   type_of_publication='Тезис', edition='издание2', range='1-2', uk_number=1234)
+        publication2 = mixer.blend('publications_table.Publication', title='Статья2', published_year=2019,
+                                   type_of_publication='Статья', edition='издание1', range='1-23', uk_number=1235)
+        publication3 = mixer.blend('publications_table.Publication', title='Статья3', published_year=2018,
+                                   type_of_publication='Тезис', edition='издание1', range='1-23', uk_number=1236)
+        publication4 = mixer.blend('publications_table.Publication', title='Статья4', published_year=2017,
+                                   type_of_publication='Статья', edition='издание1', range='1-23', uk_number=1237)
+        path = reverse('all')
+        request = RequestFactory().get(path, data={
+            'type_of_publication': 'Статья'
+        })
+        request.user = AnonymousUser()
+        filtered_publications, _ = filter_publications(request, Publication.objects.all())
+
+        assert list(filtered_publications) == [publication2, publication4]
+        request = RequestFactory().get(path, data={
+            'type_of_publication': 'Тезис'
+        })
+        filtered_publications, _ = filter_publications(request, Publication.objects.all())
+        assert list(filtered_publications) == [publication1, publication3]
+
+        request = RequestFactory().get(path, data={
+            'min_year': 2017
+        })
+        filtered_publications, _ = filter_publications(request, Publication.objects.all())
+        assert list(filtered_publications) == [publication1, publication2, publication3, publication4]
+
+        request = RequestFactory().get(path, data={
+            'min_year': 2018
+        })
+        filtered_publications, _ = filter_publications(request, Publication.objects.all())
+        assert list(filtered_publications) == [publication1, publication2, publication3]
+
+        request = RequestFactory().get(path, data={
+            'max_year': 2018
+        })
+        filtered_publications, _ = filter_publications(request, Publication.objects.all())
+        assert list(filtered_publications) == [publication3, publication4]
+
+        request = RequestFactory().get(path, data={
+            'min_year': 2018,
+            'max_year': 2019
+        })
+        filtered_publications, _ = filter_publications(request, Publication.objects.all())
+        assert list(filtered_publications) == [publication2, publication3]
