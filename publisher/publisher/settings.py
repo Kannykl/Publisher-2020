@@ -56,14 +56,13 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'publisher.urls'
 
-STATIC_URL = '/static/'
-MEDIA_URL = '/images/'
-
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = '/media/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 TEMPLATES = [
@@ -116,8 +115,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/

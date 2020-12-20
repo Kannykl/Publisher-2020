@@ -1,8 +1,11 @@
 import xlsxwriter
+import os
+from django.conf import settings
+from .models import Table
 
 
 def export_in_xls(publications, file_name):
-    workbook = xlsxwriter.Workbook(f'{file_name}')
+    workbook = xlsxwriter.Workbook(os.path.join(settings.MEDIA_ROOT, f'{file_name}'))
     worksheet = workbook.add_worksheet()
     headers = ['Звание', 'ФИО', 'Должность', 'Название', 'Издание', 'Год публикации', 'Тип публикации',
                'Диапазон', 'Номер УК']
@@ -28,3 +31,5 @@ def export_in_xls(publications, file_name):
             worksheet.write(row, col + 8, publication.uk_number)
             row += 1
     workbook.close()
+    file = Table.objects.create(file=f'{file_name}')
+    return file

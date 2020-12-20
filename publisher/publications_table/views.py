@@ -14,16 +14,16 @@ def show_all_publications(request, type_of_sort=0):
     start_publications = sort(type_of_sort)
     filtered_publications, form1 = filter_publications(request, start_publications)
     form2 = SearchPublications(request.GET)
-    form3 = export_table(filtered_publications, request)
+    form3, table = export_table(filtered_publications, request)
     paginator = Paginator(filtered_publications, 10)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
-
     context = {
         'publications': page,
         'form': form1,
         'form2': form2,
         'form3': form3,
+        'table': table,
     }
     return render(request, "publications_table/all_publications.html", context)
 
@@ -131,15 +131,16 @@ class JsonSearchPublicationsView(ListView):
 
 def export_table(publications, request):
     """ Эскпорт в Excel таблицу"""
+    table = None
     if request.method == 'GET':
         form = ExportTableForm(request.GET)
         if form.is_valid():
             if form.cleaned_data['file_name']:
                 file_name = form.cleaned_data['file_name']
-                export_in_xls(publications, file_name)
+                table = export_in_xls(publications, file_name)
     else:
         form = ExportTableForm()
-    return form
+    return form, table
 
 
 def get_publication_info(request, id: int):

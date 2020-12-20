@@ -59,3 +59,7 @@ class Publication(models.Model):
     class Meta:
         """ По умолчанию записи на главной странице отсортированы по дате публикации, сначала - самые новые"""
         ordering = ('-published_year',)
+
+
+class Table(models.Model):
+    file = models.FileField(verbose_name='Таблица')

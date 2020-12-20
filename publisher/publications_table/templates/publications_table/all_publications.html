@@ -12,9 +12,12 @@
     <input type="submit" value="Найти">
   </form>
   <form action="" method="get">
-    {% render_field form3.file_name  class="form-control" placeholder="название файла"%}
+    {% render_field form3.file_name class="form-control" placeholder="название файла"%}
     <br/>
     <input type="submit" value="Экспорт">
+    {% if table %}
+      <a  href="{{ table.file.url }}" download="{{ table.file.url }}">Скачать</a>
+    {% endif %}
   </form>
 <table class="table table-borderless" align="left">
   <thead>
@@ -30,7 +33,7 @@
   <tbody>
     {% for publication in publications%}
       <tr>
-        <td><a href="{% url 'info' publication.id %}">{{publication.title}}</a></td>
+        <td><a class="btn btn-outline-info" href="{% url 'info' publication.id %}">{{publication.title}}</a></td>
         <td>{{publication.edition}}</td>
         <td>{{publication.published_year}}</td>
         <td>{{publication.type_of_publication}}</td>
