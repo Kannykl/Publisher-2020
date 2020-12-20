@@ -39,12 +39,12 @@ def sort(type_of_sort: int):
     """ Сортирует записи по определенному полю"""
     dictionary = {
         '0': Publication.objects.all(),
-        '4': Publication.objects.all().order_by('title'),
-        '5': Publication.objects.all().order_by('edition'),
-        '6': Publication.objects.all().order_by('-published_year'),
-        '7': Publication.objects.all().order_by('type_of_publication'),
-        '8': Publication.objects.all().order_by('range'),
-        '9': Publication.objects.all().order_by('uk_number'),
+        '1': Publication.objects.all().order_by('title'),
+        '2': Publication.objects.all().order_by('edition'),
+        '3': Publication.objects.all().order_by('-published_year'),
+        '4': Publication.objects.all().order_by('type_of_publication'),
+        '5': Publication.objects.all().order_by('range'),
+        '6': Publication.objects.all().order_by('uk_number'),
     }
     publications = dictionary[f'{type_of_sort}']
     return publications
