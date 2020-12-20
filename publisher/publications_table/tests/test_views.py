@@ -12,8 +12,9 @@ from publications_table.views import (
     update_publication,
     sort,
     filter_publications,
+    JsonSearchPublicationsView,
 )
-
+import json
 
 @pytest.mark.django_db
 class TestViews(TestCase):
@@ -168,3 +169,59 @@ class TestViews(TestCase):
         })
         filtered_publications, _ = filter_publications(request, Publication.objects.all())
         assert list(filtered_publications) == [publication2, publication3]
+
+    def test_search_publications(self):
+        mixer.blend('publications_table.Author', name='TestName', surname='TestSurname',
+                    patronymic='TestPatronymic', work_position='TestWorkPosition', military_rank='TestMilitaryRank')
+        mixer.blend('publications_table.Publication',
+                                   title='Статья1', published_year=2020,
+                                   type_of_publication='Тезис', edition='издание1', range='1-2', uk_number=1234)
+        mixer.blend('publications_table.Publication', title='Статья2', published_year=2019,
+                                   authors=Author.objects.get(name='TestName').id,
+                                   type_of_publication='Статья', edition='издание2', range='1-23', uk_number=1235)
+        mixer.blend('publications_table.Publication', title='Статья3', published_year=2018,
+                                   type_of_publication='Тезис', edition='издание3', range='1-23', uk_number=1236)
+        mixer.blend('publications_table.Publication', title='Статья4', published_year=2017,
+                                   type_of_publication='Статья', edition='издание4', range='1-23', uk_number=1237)
+
+        path = reverse('json_search')
+
+        request = RequestFactory().get(path, data={
+            'search': 'Статья1'
+        })
+        response = JsonSearchPublicationsView.as_view()(request)
+        json_response = json.loads(response.content)
+        assert response.status_code == 200
+        assert json_response['publications'][0]['title'] == 'Статья1'
+
+        request = RequestFactory().get(path, data={
+            'search': 'TestSurname'
+        })
+        response = JsonSearchPublicationsView.as_view()(request)
+        json_response = json.loads(response.content)
+        assert response.status_code == 200
+        assert json_response['publications'][0]['title'] == 'Статья2'
+
+        request = RequestFactory().get(path, data={
+            'search': 'издание4'
+        })
+        response = JsonSearchPublicationsView.as_view()(request)
+        json_response = json.loads(response.content)
+        assert response.status_code == 200
+        assert json_response['publications'][0]['title'] == 'Статья4'
+
+        request = RequestFactory().get(path, data={
+            'search': 1236
+        })
+        response = JsonSearchPublicationsView.as_view()(request)
+        json_response = json.loads(response.content)
+        assert response.status_code == 200
+        assert json_response['publications'][0]['title'] == 'Статья3'
+
+        request = RequestFactory().get(path, data={
+            'search': 'Какой-то неправильный поиск'
+        })
+        response = JsonSearchPublicationsView.as_view()(request)
+        json_response = json.loads(response.content)
+        assert response.status_code == 200
+        assert json_response['publications'] == []
