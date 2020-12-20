@@ -13,8 +13,10 @@ from publications_table.views import (
     sort,
     filter_publications,
     JsonSearchPublicationsView,
+    get_publication_info
 )
 import json
+
 
 @pytest.mark.django_db
 class TestViews(TestCase):
@@ -171,18 +173,19 @@ class TestViews(TestCase):
         assert list(filtered_publications) == [publication2, publication3]
 
     def test_search_publications(self):
+        """Проверка поиска публикаций"""
         mixer.blend('publications_table.Author', name='TestName', surname='TestSurname',
                     patronymic='TestPatronymic', work_position='TestWorkPosition', military_rank='TestMilitaryRank')
         mixer.blend('publications_table.Publication',
-                                   title='Статья1', published_year=2020,
-                                   type_of_publication='Тезис', edition='издание1', range='1-2', uk_number=1234)
+                    title='Статья1', published_year=2020,
+                    type_of_publication='Тезис', edition='издание1', range='1-2', uk_number=1234)
         mixer.blend('publications_table.Publication', title='Статья2', published_year=2019,
-                                   authors=Author.objects.get(name='TestName').id,
-                                   type_of_publication='Статья', edition='издание2', range='1-23', uk_number=1235)
+                    authors=Author.objects.get(name='TestName').id,
+                    type_of_publication='Статья', edition='издание2', range='1-23', uk_number=1235)
         mixer.blend('publications_table.Publication', title='Статья3', published_year=2018,
-                                   type_of_publication='Тезис', edition='издание3', range='1-23', uk_number=1236)
+                    type_of_publication='Тезис', edition='издание3', range='1-23', uk_number=1236)
         mixer.blend('publications_table.Publication', title='Статья4', published_year=2017,
-                                   type_of_publication='Статья', edition='издание4', range='1-23', uk_number=1237)
+                    type_of_publication='Статья', edition='издание4', range='1-23', uk_number=1237)
 
         path = reverse('json_search')
 
@@ -225,3 +228,15 @@ class TestViews(TestCase):
         json_response = json.loads(response.content)
         assert response.status_code == 200
         assert json_response['publications'] == []
+
+    def test_publications_info(self):
+        """Проверка работоспособности странички информации о публикации"""
+        mixer.blend('publications_table.Author', name='TestName', surname='TestSurname',
+                    patronymic='TestPatronymic', work_position='TestWorkPosition', military_rank='TestMilitaryRank')
+        publication = mixer.blend('publications_table.Publication', title='Статья2', published_year=2019,
+                                  authors=Author.objects.get(name='TestName').id,
+                                  type_of_publication='Статья', edition='издание2', range='1-23', uk_number=1235)
+        path = reverse('info', kwargs={'id': publication.id})
+        request = RequestFactory().get(path)
+        response = get_publication_info(request, id=publication.id)
+        assert response.status_code == 200
