@@ -15,6 +15,6 @@ python manage.py makemigrations publications_table
 python manage.py migrate
 python manage.py collectstatic --no-input --clear
 export DJANGO_SETTINGS_MODULE="publisher.settings"
-#pytest -v
+pytest -v
 
 exec "$@"
