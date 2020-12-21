@@ -257,3 +257,64 @@ class TestViews(TestCase):
         export_table(Publication.objects.all(), request)
         assert Table.objects.count() == 1
 
+    def test_fail_create_author_without_name(self):
+        """ Неудачное создание автора, не хватает имени автора"""
+        assert list(Author.objects.all()) == list(Author.objects.none())
+        path = reverse('create-author')
+        request = RequestFactory().post(path, data={
+            'surname': 'TestSurname',
+            'patronymic': 'TestPatronymic',
+            'work_position': 'TestWorkPosition',
+            'military_rank': 'TestMilitaryRank',
+        })
+        request.user = AnonymousUser()
+        response = AuthorCreateView.as_view()(request)
+        assert response.status_code == 200
+        assert Author.objects.count() == 0
+
+    def test_fail_create_publication_without_author(self):
+        """ Неудачное создание публикации, без автора """
+        assert list(Publication.objects.all()) == list(Publication.objects.none())
+
+        path = reverse('publication-create')
+        request = RequestFactory().get(path, data={
+            'title': 'СтатьяПослеИзменения',
+            'published_year': 2020,
+            'type_of_publication': 'Тезис',
+            'edition': 'издание',
+            'range': '1-2',
+            'uk_number': 2441,
+        })
+        response = create_publication(request)
+        assert response.status_code == 200
+        assert list(Publication.objects.all()) == list(Publication.objects.none())
+
+    def test_fail_create_publication_with_wrong_type_of_publication(self):
+        """ Неудачное создание публикации, с несуществующим типом публикации """
+        assert list(Publication.objects.all()) == list(Publication.objects.none())
+
+        mixer.blend('publications_table.Author', name='TestName', surname='TestSurname',
+                    patronymic='TestPatronymic', work_position='TestWorkPosition', military_rank='TestMilitaryRank')
+        path = reverse('publication-create')
+        request = RequestFactory().post(path, data={
+            'authors': Author.objects.get(name='TestName').id,
+            'title': 'Статья1',
+            'published_year': 2020,
+            'type_of_publication': 'Несущестующий тип',
+            'edition': 'издание',
+            'range': '1-2',
+            'uk_number': 2441
+        })
+        response = create_publication(request)
+        assert response.status_code == 200
+        assert list(Publication.objects.all()) == list(Publication.objects.none())
+
+    def test_fail_delete_not_exist_publication(self):
+        """ Неудачная попытка удаления несуществующей записи """
+        assert list(Publication.objects.all()) == list(Publication.objects.none())
+        assert Publication.objects.count() == 0
+
+        response = self.client.post(reverse('publication-delete', kwargs={'pk': 1}))
+        assert response.status_code == 404
+        assert list(Publication.objects.all()) == list(Publication.objects.none())
+        assert Publication.objects.count() == 0
