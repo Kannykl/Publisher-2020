@@ -1,0 +1,65 @@
+header {
+  display: flex;
+  background-color: #26a69a;
+}
+
+.title {
+  width: 50%;
+  text-align: center;
+  color: bisque;
+}
+
+.nit {
+  display: flex;
+  justify-content: space-around;
+  width: 50%;
+}
+
+.container_1 {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+}
+
+.cl1, .cl2, .cl3 {
+  color: white;
+  cursor: pointer;
+  transition: color .3s linear;
+}
+
+.cl2:hover, .cl3:hover {
+  color: blue;
+}
+
+.striped {
+  margin-right: 30px;
+}
+
+.filter {
+  margin-bottom: 50px;
+}
+
+.input-field {
+  margin-bottom: 30px;
+}
+
+.text {
+  margin-bottom: 30px;
+}
+
+th {
+  color: #26a69a;
+}
+
+td {
+  color: black;
+}
+
+.ul_wrapper {
+  text-align: center;
+}
+
+a {
+color: #26a69a;
+}
