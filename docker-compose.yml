@@ -20,6 +20,8 @@ services:
       - POSTGRES_USER=kanny
       - POSTGRES_PASSWORD=123
       - POSTGRES_DB=publisher
+    ports:
+      - 5432:5447
 volumes:
   postgres_data:
   static_volume:
