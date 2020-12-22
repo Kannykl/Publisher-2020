@@ -1,7 +1,7 @@
 .idea/
 __pycache__/
-publisher/db.sqlite3
+db.sqlite3
 staticfiles/
 .log
 .directory
-publisher/publications_table/migrations/
+publications_table/migrations/
