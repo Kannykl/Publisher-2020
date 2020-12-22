@@ -4,7 +4,7 @@
     "default_urn": "/publisher/",
     "curators": ["anetto", "barabass"],
     "developer": "kanny",
-    "static": "/home/kanny/staticfiles",
+    "static": "/home/kanny/static",
     "update_token": "ed9ac173-e87a-44ce-8d09-fe162343d95f"
 }
 
