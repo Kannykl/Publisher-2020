@@ -1,97 +1,1 @@
-{% extends "publications_table/main2.html" %}
-{% load crispy_forms_tags %}
-{% block content %}
-{% load widget_tweaks %}
-{% load static %}
-
-<body>
-<div class="body">
-<div class="container_1">
-  <table class="striped">
-    <thead>
-      <tr>
-        <th><a href="{% url 'sort' 1 %}">Название</a></th>
-        <th><a href="{% url 'sort' 2 %}">Издание</a></th>
-        <th><a href="{% url 'sort' 3 %}">Год публикации</a></th>
-        <th><a href="{% url 'sort' 4 %}">Тип публикации</a></th>
-        <th><a href="{% url 'sort' 5 %}">Диапазон</a></th>
-        <th><a href="{% url 'sort' 6 %}">Номер УК</a></th>
-      </tr>
-    </thead>
-    <tbody>
-        {% for publication in publications%}
-          <tr>
-            <td><a href="{% url 'info' publication.id %}">{{publication.title}}</a></td>
-            <td>{{publication.edition}}</td>
-            <td>{{publication.published_year}}</td>
-            <td>{{publication.type_of_publication}}</td>
-            <td>{{publication.range}}</td>
-            <td>{{publication.uk_number}}</td>
-          </tr>
-        {% endfor %}
-    </tbody>
-  </table>
-  <div class="sidebar">
-    <div class="wrapper">
-        <div class="filter">
-          <p class="text">Год издания:</p>
-            <form action="" method="get">
-              <div class="input-field col s6">
-              {% render_field form.min_year class="validate" id="start_at" type="text"%}
-              <label for="start_at">c</label>
-            </div>
-              <div class="input-field col s6">
-              {% render_field form.max_year class="validate" id="finish_to" type="text"%}
-              <label for="finish_to">по</label>
-            </div>
-            {% for x in form.type_of_publication %}
-            <p>
-              <label>
-                <input type="checkbox" />
-                <span>{{ x }}</span>
-              </label>
-            </p>
-            {% endfor%}
-            <button type="submit" class="btn waves-effect waves-light">Показать результаты</button>
-            </form>
-        </div>
-    <div class="loading"></div>
-      <div class="input-field col s6">
-        <form action="{% url 'json_search' %}" method="get" name="search">
-          <div class="input-field col s6">
-          {% render_field form2.search class="validate" id="search" type="text" %}
-          <label for="search">Поиск</label>
-          <button type="submit" class="waves-effect waves-light btn-small">Найти</button>
-          </div>
-        </form>
-
-        <form action="" method="get">
-          <div class="input-field col s6">
-          {% render_field form3.file_name class="validate" id="file-name" type="text"%}
-          <label for="file-name">Название файла</label>
-          <button type="submit" class="waves-effect waves-light btn-small">Экспорт </button>
-          {% if table %}
-            <p><a  href="{{ table.file.url }}" download="{{ table.file.url }}">Скачать</a></p>
-          {% endif %}
-          </div>
-        </form>
-        </div>
-        </div>
-        </div>
-      </div>
-</div>
-<div class="ul_wrapper">
-  <ul class="pagination">
-    {% for n in publications.paginator.page_range %}
-        {% if publications.number == n %}
-    <li class="active waves-effect"><a href="?page={{n}}">{{n}}</a></li>
-    {% elif n > publications.number|add:-2 and n < publications.number|add:2%}
-    <li class="waves-effect"><a href="?page={{n}}">{{n}}</a></li>
-    {% endif %}
-{% endfor %}
-  </ul>
-</div>
-</body>
-<script src="http://twitter.github.com/hogan.js/builds/3.0.1/hogan-3.0.1.js"></script>
-<script src="{% static 'js/script.js' %}"></script>
-{% endblock content %}
+{% extends "publications_table/main2.html" %}{% load crispy_forms_tags %}{% block content %}{% load widget_tweaks %}{% load static %}<body><div class="body"><div class="container_1">  <table class="striped">    <thead>      <tr>        <th><a href="{% url 'sort' 1 %}">Название</a></th>        <th><a href="{% url 'sort' 2 %}">Издание</a></th>        <th><a href="{% url 'sort' 3 %}">Год публикации</a></th>        <th><a href="{% url 'sort' 4 %}">Тип публикации</a></th>        <th><a href="{% url 'sort' 5 %}">Диапазон</a></th>        <th><a href="{% url 'sort' 6 %}">Номер УК</a></th>      </tr>    </thead>    <tbody>        {% for publication in publications%}          <tr>            <td><a href="{% url 'info' publication.id %}">{{publication.title}}</a></td>            <td>{{publication.edition}}</td>            <td>{{publication.published_year}}</td>            <td>{{publication.type_of_publication}}</td>            <td>{{publication.range}}</td>            <td>{{publication.uk_number}}</td>          </tr>        {% endfor %}    </tbody>  </table>  <div class="sidebar">    <div class="wrapper">        <div class="filter">          <p class="text">Год издания:</p>            <form action="" method="get">              <div class="input-field col s6">              {% render_field form.min_year class="validate" id="start_at" type="text"%}              <label for="start_at">c</label>            </div>              <div class="input-field col s6">              {% render_field form.max_year class="validate" id="finish_to" type="text"%}              <label for="finish_to">по</label>            </div>              {% for x in form.type_of_publication %}              <p>                <label>                   <input type="checkbox" name="type_of_publication"  value='{% spaceless %}{{x|striptags}}{%endspaceless %}'/>                   <span>{{x}}</span>                </label>              </p>              {% endfor %}            <button type="submit" class="btn waves-effect waves-light">Показать результаты</button>            </form>        </div>    <div class="loading"></div>      <div class="input-field col s6">        <form action="{% url 'json_search' %}" method="get" name="search">          <div class="input-field col s6">          {% render_field form2.search class="validate" id="search" type="text" %}          <label for="search">Поиск</label>          <button type="submit" class="waves-effect waves-light btn-small">Найти</button>          </div>        </form>        <form action="" method="get">          <div class="input-field col s6">          {% render_field form3.file_name class="validate" id="file-name" type="text"%}          <label for="file-name">Название файла</label>          <button type="submit" class="waves-effect waves-light btn-small">Экспорт </button>          {% if table %}            <p><a  href="{{ table.file.url }}" download="{{ table.file.url }}">Скачать</a></p>          {% endif %}          </div>        </form>        </div>        </div>        </div>      </div></div><div class="ul_wrapper">  <ul class="pagination">    {% for n in publications.paginator.page_range %}        {% if publications.number == n %}    <li class="active waves-effect"><a href="?page={{n}}">{{n}}</a></li>    {% elif n > publications.number|add:-2 and n < publications.number|add:2%}    <li class="waves-effect"><a href="?page={{n}}">{{n}}</a></li>    {% endif %}{% endfor %}  </ul></div></body><script src="http://twitter.github.com/hogan.js/builds/3.0.1/hogan-3.0.1.js"></script><script src="{% static 'js/script.js' %}"></script>{% endblock content %}
