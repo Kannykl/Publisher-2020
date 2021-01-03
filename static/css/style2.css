@@ -3,6 +3,13 @@ header {
   background-color: #26a69a;
 }
 
+.menu {
+text-align: left;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
 .title {
   width: 50%;
   text-align: center;

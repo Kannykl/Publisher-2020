@@ -1,0 +1,22 @@
+{% extends "publications_table/main2.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+{% load widget_tweaks %}
+<main role="main" class="container">
+<div class="content-section">
+    <h3 class="display-6">{{author.initials}}</h3>
+    {% if author.authors.all %}
+    <h6>Автор таких статей как:</h6>
+         {% for publication in author.authors.all%}
+             <p>
+                <a href="{% url 'info' publication.id %}">{{publication.title}}</a>
+            </p>
+        {% endfor %}
+    {% else %}
+    <p>На данный момент нет публикаций </p>
+    {% endif%}
+    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'author-delete' author.id %}">Удалить</a>
+    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'author-update' author.id %}">Редактировать</a>
+    </div>
+</main>
+{% endblock content %}

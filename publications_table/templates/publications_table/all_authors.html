@@ -1,0 +1,41 @@
+{% extends "publications_table/main2.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+{% load widget_tweaks %}
+{% load static %}
+<body>
+<div class="body">
+  <div class="container_1">
+    <table class="striped">
+      <thead>
+        <tr>
+          <th><a href="#">ФИО</a></th>
+          <th><a href="#">Должность</a></th>
+          <th><a href="#">Звание</a></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for author in authors%}
+          <tr>
+            <td><a href="{% url 'author_info' author.id %}">{{author.initials}}</a></td>
+            <td>{{author.work_position}}</td>
+            <td>{{author.military_rank}}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="ul_wrapper">
+  <ul class="pagination">
+    {% for n in authors.paginator.page_range %}
+        {% if authors.number == n %}
+    <li class="active waves-effect"><a href="?page={{n}}">{{n}}</a></li>
+    {% elif n > authors.number|add:-2 and n < authors.number|add:2%}
+    <li class="waves-effect"><a href="?page={{n}}">{{n}}</a></li>
+    {% endif %}
+{% endfor %}
+  </ul>
+</div>
+</body>
+{% endblock content %}

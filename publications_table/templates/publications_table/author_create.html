@@ -1,27 +1,33 @@
-{% extends "publications_table/main.html" %}
+{% extends "publications_table/main2.html" %}
 {% load crispy_forms_tags %}
-{% block content %}
 {% load widget_tweaks %}
-<main role="main" class="container">
-<div class="content-section">
-        <form method="POST">
-            {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Создание автора</legend>
-                {% render_field form.name class="form-control" placeholder="Имя" %}
-                <br/>
-                {% render_field form.surname class="form-control" placeholder="Фамилия" %}
-                <br/>
-                {% render_field form.patronymic class="form-control" placeholder="Отчество" %}
-                <br/>
-                {% render_field form.military_rank class="form-control" placeholder="Звание"%}
-                <br/>
-                {% render_field form.work_position class="form-control" placeholder="Должность"%}
-            </fieldset>
-            <div class="form-group">
-                <button class="btn btn-outline-info" type="submit">Создать</button>
+{% block content %}
+<div class="container">
+        <form method="POST" class="content-section">
+        {% csrf_token %}
+            <div class="input-field col s6">
+            {% render_field form.surname class="validate" id="surname" type="text"  %}
+            <label for="surname">Фамилия</label>
             </div>
+            <div class="input-field col s6">
+            {% render_field form.name class="validate" id="name" type="text" %}
+            <label for="name">Имя</label>
+            </div>
+            <div class="input-field col s6">
+            {% render_field form.patronymic class="validate" id="patronymic" type="text" %}
+            <label for="patronymic">Отчество</label>
+            </div>
+            <div class="input-field col s6">
+            {% render_field form.military_rank class="validate" id="military_rank" type="text" %}
+            <label for="military_rank">Звание</label>
+            </div>
+            <div class="input-field col s6">
+            {% render_field form.work_position class="validate" id="military_rank" type="text"%}
+            <label for="work_position">Должность</label>
+            </div>
+        <div class="form-group">
+            <button class="btn btn-outline-info" type="submit">Создать</button>
+        </div>
         </form>
-    </div>
-</main>
+</div>
 {% endblock content %}

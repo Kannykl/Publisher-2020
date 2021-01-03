@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Publication, Author
-from django.views.generic import CreateView, DeleteView, ListView
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 from .forms import PublicationFilter, SearchPublications, PublicationCreateForm, ExportTableForm, PublicationUpdateForm
 from .export import export_in_xls
 from .authorization import check_user
@@ -150,3 +150,42 @@ def get_publication_info(request, id: int):
         "publication": publication,
     }
     return render(request, "publications_table/publication_info.html", context)
+
+
+class AuthorDeleteView(DeleteView):
+    """ Страница удаления автора из списка """
+    model = Author
+    template_name = 'publications_table/author_delete.html'
+    success_url = '/publisher/authors/'
+
+
+def show_all_authors(request):
+    """ Страница отображения всех авторов"""
+    authors = Author.objects.all()
+    paginator = Paginator(authors, 10)
+    page_number = request.GET.get('page', 1)
+    page = paginator.get_page(page_number)
+    context = {
+        'authors': page,
+    }
+    return render(request, "publications_table/all_authors.html", context)
+
+
+def get_author_info(request, id: int):
+    """Информация об авторе"""
+    author = Author.objects.get(pk=id)
+    context = {
+        "author": author,
+    }
+    return render(request, "publications_table/author_info.html", context)
+
+
+class AuthorUpdateView(UpdateView):
+    """ Изменение параметров автора """
+    model = Author
+    template_name = 'publications_table/author_update.html'
+    fields = '__all__'
+    success_url = '/publisher/authors'
+
+    def form_valid(self, form):
+        return super().form_valid(form)

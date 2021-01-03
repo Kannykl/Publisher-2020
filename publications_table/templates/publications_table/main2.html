@@ -8,22 +8,33 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"/>
     <!-- normalize css plugin -->
     <link rel="stylesheet" href="https://yarnpkg.com/en/package/normalize.css"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
     <link rel="stylesheet" type="text/css" href="{% static 'css/style2.css' %}">
     <title>Publisher</title>
 </head>
 <body>
     <div class="body">
       <header>
+          <div class="menu">
+            <a data-target="slide-out" class="sidenav-trigger">
+                    <p><img class="cl3" width="25px" height="25px" src="{% static 'images/menu.svg' %}"></p>
+            </a>
+          </div>
         <div class="title">
           <p><a class="cl2" href="{% url 'all' %}">Publisher</a></p>
         </div>
           <div class="nit">
             {% if publications.object_list.all %}
               <p class="cl1">Сейчас в таблице: {{publications.object_list.all.count}} записи/ей <p>
+              {% else %}
+              <p class="cl1">Сейчас в таблице нет записей</p>
               {% endif %}
-              <p><a class="cl2" href="{% url 'publication-create' %}">Создать новую запись</a></p>
-              <p><a class="cl3" href="{% url 'create-author' %}">Добавить автора</a></p>
+              <ul id="slide-out" class="sidenav">
+                <li><div class="user-view">
+                <li><a class="waves-effect" href="{% url 'all_authors' %}">Все авторы</a></li>
+                <li><a class="cl3" href="{% url 'create-author' %}">Добавить автора</a></li>
+                <li><a class="cl2" href="{% url 'publication-create' %}">Создать новую запись</a></li>
+              </ul>
             </div>
       </header>
     </div>
@@ -33,5 +44,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script>
+ document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.sidenav');
+    var instances = M.Sidenav.init(elems, {});
+  });
+</script>
 </body>
 </html>
