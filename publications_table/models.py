@@ -28,19 +28,27 @@ class Author(models.Model):
         ordering = ('surname',)
 
 
+class Type(models.Model):
+    """ Тип каждой статьи"""
+    type_of_publication = models.CharField(max_length=255, verbose_name="тип публикации", null=True)
+    enable = models.BooleanField(default=True)
+
+    objects = models.Manager()
+
+    def __str__(self):
+        return self.type_of_publication
+
+    def __repr__(self):
+        return self.type_of_publication
+
+
 class Publication(models.Model):
     """Запись в таблице о публикации"""
 
-    TYPES_OF_PUBLICATIONS = (
-        ('Тезис', 'Тезис'),
-        ('Статья', 'Статья',)
-    )
-
     authors = models.ManyToManyField(Author, verbose_name="авторы", related_name='authors')
     title = models.CharField(max_length=256, verbose_name="название статьи", null=False, )
-    type_of_publication = models.CharField(max_length=255, verbose_name="тип публикации",
-                                           choices=TYPES_OF_PUBLICATIONS,)
     edition = models.CharField(max_length=255, verbose_name="издание", null=False)
+    type_of_publication = models.ForeignKey(Type, on_delete=models.DO_NOTHING, null=True)
     published_year = models.PositiveIntegerField(validators=
                                                  [MaxValueValidator(datetime.now().year),
                                                   MinValueValidator(1921)], verbose_name="год публикации",
@@ -62,4 +70,5 @@ class Publication(models.Model):
 
 
 class Table(models.Model):
+    """ Таблица записей """
     file = models.FileField(verbose_name='Таблица')

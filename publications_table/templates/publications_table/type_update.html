@@ -1,0 +1,19 @@
+{% extends "publications_table/main2.html" %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="container">
+        <form method="POST" class="content-section">
+        {% csrf_token %}
+            <div class="input-field col s6">
+            {% render_field form.type_of_publication class="validate" id="type_of_publication" type="text"%}
+            <label for="type_of_publication">Тип публикации</label>
+            </div>
+            {% render_field form.enable %}
+            <label for="enable"></label>
+        <div class="form-group">
+            <button class="btn btn-outline-info" type="submit">Сохранить</button>
+        </div>
+        </form>
+</div>
+{% endblock content %}

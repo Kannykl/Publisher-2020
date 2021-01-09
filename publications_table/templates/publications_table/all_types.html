@@ -1,0 +1,39 @@
+{% extends "publications_table/main2.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+{% load widget_tweaks %}
+{% load static %}
+<body>
+<div class="body">
+  <div class="container_1">
+    <table class="striped">
+      <thead>
+        <tr>
+          <th><a>Тип публикации</a></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for type in types%}
+          <tr>
+            <td>{{type.type_of_publication}}</td>
+            <td><a class="btn-secondary btn-sm mt-1 mb-1" href="{% url 'update-type' type.id %}"><img src="{% static 'images/update_picture.jpg'%}" width="20" height="20"></a></td>
+            <td><a class="btn-secondary btn-sm mt-1 mb-1" href="{% url 'type-delete' type.id %}"><img src="{% static 'images/delete_picture.png'%}" width="20" height="20"></a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="ul_wrapper">
+  <ul class="pagination">
+    {% for n in authors.paginator.page_range %}
+        {% if authors.number == n %}
+    <li class="active waves-effect"><a href="?page={{n}}">{{n}}</a></li>
+    {% elif n > authors.number|add:-2 and n < authors.number|add:2%}
+    <li class="waves-effect"><a href="?page={{n}}">{{n}}</a></li>
+    {% endif %}
+{% endfor %}
+  </ul>
+</div>
+</body>
+{% endblock content %}

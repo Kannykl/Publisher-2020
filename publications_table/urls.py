@@ -11,6 +11,10 @@ from .views import (
     update_publication,
     show_all_authors,
     get_author_info,
+    show_all_types,
+    TypeCreateView,
+    TypeUpdateView,
+    delete_type_of_publication,
 )
 
 urlpatterns = [
@@ -30,4 +34,8 @@ urlpatterns = [
     path('delete_publication/<int:pk>', PublicationDeleteView.as_view(), name='publication-delete'),
     path('publication_info/<int:id>', get_publication_info, name='info'),
 
+    path('types/', show_all_types, name='all_types'),
+    path('delete_type/<int:pk>',delete_type_of_publication, name='type-delete'),
+    path('create_type/', TypeCreateView.as_view(), name='create-type'),
+    path('update_type/<int:pk>', TypeUpdateView.as_view(), name='update-type'),
 ]

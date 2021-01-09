@@ -1,0 +1,15 @@
+{% extends "publications_table/main2.html" %}
+{% block content %}
+<body>
+<div class="content-section">
+        <form method="POST">
+            {% csrf_token %}
+                <h2>Вы точно хотите удалить "{{object}}" ?</h2>
+            <div class="form-group">
+                <button class="btn btn-outline-danger" type="submit">Да, удалить</button>
+                <a class="btn btn-outline-secondary" href="{% url 'all_types' %}">Отмена</a>
+            </div>
+        </form>
+    </div>
+</body>
+{% endblock content %}
