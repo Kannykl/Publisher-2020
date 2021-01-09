@@ -235,7 +235,7 @@ class TypeCreateView(CreateView):
     model = Type
     template_name = 'publications_table/type_create.html'
     fields = '__all__'
-    success_url = '/publisher/types/'
+    success_url = '/publisher/create_publication/'
 
     def form_valid(self, form):
         return super().form_valid(form)

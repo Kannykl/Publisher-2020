@@ -9,12 +9,10 @@
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Создание записи</legend>
                 {% render_field form.title class="form-control" placeholder="Название статьи" %}
-                <br/>
                 {% render_field form.authors class="list" %}
-                 <a class="nav-link disabled font-italic" href="{% url 'create-author' %}">добавить автора</a>
-                <br/>
+                <a class="nav-link disabled font-italic" href="{% url 'create-author' %}">добавить автора</a>
                 {% render_field form.type_of_publication class="form-control"%}
-                <br/>
+                <a class="nav-link disabled font-italic" href="{% url 'create-type' %}">добавить тип</a>
                 {% render_field form.edition class="form-control" placeholder="Издание"%}
                 <br/>
                 {% render_field form.published_year class="form-control" placeholder="Год публикации"%}
