@@ -31,11 +31,12 @@
               {% endif %}
               <ul id="slide-out" class="sidenav">
                 <li><div class="user-view">
-                <li><a class="waves-effect" href="{% url 'all_authors' %}">Все авторы</a></li>
-                <li><a class="cl3" href="{% url 'create-author' %}">Добавить автора</a></li>
-                <li><a class="cl3" href="{% url 'create-type' %}">Добавить тип публикации</a></li>
-                <li><a class="cl2" href="{% url 'publication-create' %}">Создать новую запись</a></li>
-                <li><a class="cl2" href="{% url 'all_types' %}">Типы публикаций</a></li>
+                  <li><a class="waves-effect" href="{% url 'all' %}">Публикации</a></li>
+                  <li><a class="waves-effect" href="{% url 'all_authors' %}">Авторы</a></li>
+                  <li><a class="cl2" href="{% url 'all_types' %}">Типы публикаций</a></li>
+                  <li><a class="cl2" href="{% url 'publication-create' %}">Добавить новую запись</a></li>
+                  <li><a class="cl3" href="{% url 'create-type' %}">Добавить тип публикации</a></li>
+                  <li><a class="cl3" href="{% url 'create-author' %}">Добавить автора</a></li>
               </ul>
             </div>
       </header>
