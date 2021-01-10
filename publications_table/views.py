@@ -48,7 +48,7 @@ def sort(type_of_sort: int):
         '1': Publication.objects.all().order_by('title'),
         '2': Publication.objects.all().order_by('edition'),
         '3': Publication.objects.all().order_by('-published_year'),
-        '4': Publication.objects.all().order_by('type_of_publication'),
+        '4': Publication.objects.all().order_by('type_of_publication__type_of_publication'),
         '5': Publication.objects.all().order_by('range'),
         '6': Publication.objects.all().order_by('uk_number'),
     }
