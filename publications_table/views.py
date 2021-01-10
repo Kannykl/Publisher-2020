@@ -8,7 +8,6 @@ from .forms import (PublicationFilter,
                     PublicationCreateForm,
                     ExportTableForm,
                     PublicationUpdateForm,
-                    TypeDeleteForm
                     )
 from .export import export_in_xls
 from .authorization import check_user
@@ -104,18 +103,27 @@ def create_publication(request):
 
 
 def update_publication(request, pk):
-    post = get_object_or_404(Publication, id=pk)
+    """ Страница редактирования публикации """
+    publication = get_object_or_404(Publication, id=pk)
     types_options = tuple((str(type_of_publication), str(type_of_publication))
                           for type_of_publication in Type.objects.all() if type_of_publication.enable)
     if request.method == "POST":
-        form = PublicationUpdateForm(data=request.POST, instance=post, types_options=types_options)
+        form = PublicationUpdateForm(data=request.POST, instance=publication, types_options=types_options)
         if form.is_valid():
+            new_type_of_publication = Type.objects.get(type_of_publication=form.cleaned_data['type_of_publication'])
+            old_type_of_publication = Type.objects.get(type_of_publication=form.fields['type_of_publication'].initial)
+            old_type_of_publication.publication_set.remove(publication)
+            new_type_of_publication.publication_set.add(
+                Publication.objects.get(uk_number=form.cleaned_data['uk_number']),
+                )
+            publication.type_of_publication = new_type_of_publication
+            publication.save()
             form.save()
-            return redirect(f'/publisher/publication_info/{post.id}')
+            return redirect(f'/publisher/publication_info/{publication.id}')
     else:
-        form = PublicationUpdateForm(instance=post, types_options=types_options)
+        form = PublicationUpdateForm(instance=publication, types_options=types_options)
     return render(request, 'publications_table/publication_update.html', {'form': form,
-                                                                          'publication': post})
+                                                                          'publication': publication})
 
 
 class JsonSearchPublicationsView(ListView):
