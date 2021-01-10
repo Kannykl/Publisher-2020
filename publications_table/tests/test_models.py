@@ -1,5 +1,6 @@
 from mixer.backend.django import mixer
 import pytest
+from publications_table.views import Author, Publication
 
 
 @pytest.mark.django_db
@@ -22,11 +23,15 @@ class TestModels:
         assert author.__repr__() == 'Смирнов'
 
     def test_ordering_publications(self):
-        publication1 = mixer.blend('publications_table.Publication', title='Статья1')
+        publication1 = mixer.blend('publications_table.Publication', title='Статья1', published_year=2001)
+        publication2 = mixer.blend('publications_table.Publication', title='Статья2', published_year=2020)
+        assert tuple(Publication.objects.all()) == (publication2, publication1)
         ordering = publication1._meta.ordering
         assert ordering[0] == '-published_year'
 
     def test_ordering_authors(self):
-        author = mixer.blend('publications_table.Author', name='Иван', surname='Смирнов', patronymic='Георгиевич')
-        ordering = author._meta.ordering
+        author1 = mixer.blend('publications_table.Author', name='Иван', surname='Абрамов', patronymic='Георгиевич')
+        author2 = mixer.blend('publications_table.Author', name='Иван', surname='Васильев', patronymic='Георгиевич')
+        ordering = author1._meta.ordering
+        assert tuple(Author.objects.all()) == (author1, author2)
         assert ordering[0] == 'surname'

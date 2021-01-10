@@ -10,11 +10,16 @@ from publications_table.views import (
     AuthorCreateView,
     create_publication,
     update_publication,
+    AuthorUpdateView,
     sort,
     filter_publications,
     JsonSearchPublicationsView,
     get_publication_info,
     export_table,
+    TypeCreateView,
+    TypeUpdateView,
+    show_all_types,
+    show_all_authors,
 )
 import json
 
@@ -254,9 +259,9 @@ class TestViews(TestCase):
         publication = mixer.blend('publications_table.Publication', title='Статья2', published_year=2019,
                                   authors=Author.objects.get(name='TestName').id,
                                   type_of_publication=article, edition='издание2', range='1-23', uk_number=1235)
-        path = reverse('info', kwargs={'id': publication.id})
+        path = reverse('info', kwargs={'pk': publication.id})
         request = RequestFactory().get(path)
-        response = get_publication_info(request, id=publication.id)
+        response = get_publication_info(request, pk=publication.id)
         assert response.status_code == 200
 
     def test_export_table(self):
@@ -337,3 +342,131 @@ class TestViews(TestCase):
         assert response.status_code == 404
         assert list(Publication.objects.all()) == list(Publication.objects.none())
         assert Publication.objects.count() == 0
+
+    def test_success_create_type(self):
+        """ Удачное создания типа публикации """
+        assert Type.objects.count() == 0
+        path = reverse('create-type')
+        request = RequestFactory().post(path, data={
+            'type_of_publication': 'Тезис',
+            'enable': True
+        })
+        response = TypeCreateView.as_view()(request)
+        assert response.status_code == 302
+        assert '/publisher/create_publication/' in response.url
+
+    def test_success_create_hidden_type(self):
+        """ Удачное создание скрытого типа публикации(который не будет отображаться в списке) """
+        assert Type.objects.count() == 0
+        path = reverse('create-type')
+        request = RequestFactory().post(path, data={
+            'type_of_publication': 'sometype',
+            'enable': False
+        })
+        response = TypeCreateView.as_view()(request)
+        assert response.status_code == 302
+        assert '/publisher/create_publication/' in response.url
+
+    def test_success_hide_type(self):
+        """ Удачное удаление типа(скрытие из общего списка, доступных для создания публикаций типов) """
+        type_of_publication = mixer.blend('publications_table.Type', type_of_publication='Тезис')
+        assert Type.objects.count() == 1
+        path = reverse('type-delete', kwargs={
+            'pk': type_of_publication.id
+        })
+        response = self.client.post(path)
+        assert response.status_code == 302
+        assert '/publisher/types' in response.url
+        existing_types = tuple((type_of_publication for
+                                type_of_publication in Type.objects.all() if type_of_publication.enable))
+        assert len(existing_types) == 0
+        assert Type.objects.count() == 1
+
+    def test_success_delete_author(self):
+        """ Удачное удаление автора """
+        author = mixer.blend('publications_table.Author', name='TestName', surname='TestSurname',
+                             patronymic='TestPatronymic', work_position='TestWorkPosition',
+                             military_rank='TestMilitaryRank')
+        type_of_publication = mixer.blend('publications_table.Type', type_of_publication='Тезис')
+        assert Author.objects.count() == 1
+        publication = mixer.blend('publications_table.Publication', title='Статья1', published_year=2020,
+                                  type_of_publication=type_of_publication, edition='издание', range='1-2',
+                                  uk_number=123, authors=author.id)
+        path = reverse('author-delete', kwargs={
+            'pk': author.id
+        })
+        response = self.client.post(path)
+        assert Author.objects.count() == 0
+        assert response.status_code == 302
+        assert '/publisher/author' in response.url
+        assert tuple(publication.authors.all()) == ()
+
+    def test_success_update_type(self):
+        """ Удачное редактирование типа """
+        type_of_publication = mixer.blend('publications_table.Type', type_of_publication='Тезис')
+        assert Type.objects.all()[0].enable is True
+        assert Type.objects.all()[0].type_of_publication == 'Тезис'
+
+        path = reverse('update-type', kwargs={
+            'pk': type_of_publication.id
+        })
+        request = RequestFactory().post(path, data={
+            'type_of_publication': 'edited_type',
+            'enable': False
+        })
+
+        request.user = AnonymousUser()
+        response = TypeUpdateView.as_view()(request, pk=type_of_publication.id)
+        print(type_of_publication.type_of_publication)
+
+        assert response.status_code == 302
+        assert '/publisher/types' in response.url
+        assert Type.objects.all()[0].enable is False
+        assert Type.objects.all()[0].type_of_publication == 'edited_type'
+
+    def test_success_update_author(self):
+        """ Удаачное редактирование автора """
+        author = mixer.blend('publications_table.Author', name='TestName', surname='TestSurname',
+                             patronymic='TestPatronymic', work_position='TestWorkPosition',
+                             military_rank='TestMilitaryRank')
+
+        assert Author.objects.all()[0].name == 'TestName'
+        assert Author.objects.all()[0].surname == 'TestSurname'
+        assert Author.objects.all()[0].patronymic == 'TestPatronymic'
+        assert Author.objects.all()[0].work_position == 'TestWorkPosition'
+        assert Author.objects.all()[0].military_rank == 'TestMilitaryRank'
+
+        path = reverse('author-update', kwargs={
+            'pk': author.id
+        })
+        request = RequestFactory().post(path, data={
+            'name': 'NewName',
+            'surname': 'NewSurname',
+            'patronymic': 'NewPatronymic',
+            'work_position': 'NewWorkPosition',
+            'military_rank': 'NewMilitaryRank',
+        })
+        response = AuthorUpdateView.as_view()(request, pk=author.id)
+        assert response.status_code == 302
+        assert 'publisher/authors' in response.url
+        assert Author.objects.all()[0].name == 'NewName'
+        assert Author.objects.all()[0].surname == 'NewSurname'
+        assert Author.objects.all()[0].patronymic == 'NewPatronymic'
+        assert Author.objects.all()[0].work_position == 'NewWorkPosition'
+        assert Author.objects.all()[0].military_rank == 'NewMilitaryRank'
+
+    def test_show_all_author(self):
+        """ Показ всех доступных авторов"""
+        path = reverse('all_authors')
+        request = RequestFactory().get(path)
+        request.user = AnonymousUser()
+        response = show_all_authors(request)
+        assert response.status_code == 200
+
+    def test_show_all_types(self):
+        """ Показ всех доступных типов"""
+        path = reverse('all_types')
+        request = RequestFactory().get(path)
+        request.user = AnonymousUser()
+        response = show_all_types(request)
+        assert response.status_code == 200

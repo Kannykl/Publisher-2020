@@ -29,7 +29,7 @@ class TestUrls:
         assert resolve(path).view_name == 'publication-delete'
 
     def test_info_urls(self):
-        path = reverse('info', kwargs={'id': 1})
+        path = reverse('info', kwargs={'pk': 1})
         assert resolve(path).view_name == 'info'
 
     def test_json_search_url(self):
