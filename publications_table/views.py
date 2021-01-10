@@ -1,8 +1,9 @@
+from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Publication, Author, Type
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+from .models import Publication, Author, Type
 from .forms import (PublicationFilter,
                     SearchPublications,
                     PublicationCreateForm,
@@ -10,8 +11,6 @@ from .forms import (PublicationFilter,
                     PublicationUpdateForm,
                     )
 from .export import export_in_xls
-from .authorization import check_user
-from django.core.paginator import Paginator
 
 
 def show_all_publications(request, type_of_sort=0):
@@ -63,17 +62,20 @@ def filter_publications(request, publications):
         form = PublicationFilter(request.GET, types_options=types_options)
         if form.is_valid():
             type_of_publications = tuple(
-                (Type.objects.get(type_of_publication=type_of_publication).id for type_of_publication in
-                 form.cleaned_data['type_of_publication']))
+                (Type.objects.get(type_of_publication=type_of_publication).id
+                 for type_of_publication in form.cleaned_data['type_of_publication']))
 
             if form.cleaned_data['min_year']:
-                publications = publications.filter(published_year__gte=form.cleaned_data['min_year'])
+                publications = publications.filter(published_year__gte=
+                                                   form.cleaned_data['min_year'])
 
             if form.cleaned_data['max_year']:
-                publications = publications.filter(published_year__lte=form.cleaned_data['max_year'])
+                publications = publications.filter(published_year__lte=
+                                                   form.cleaned_data['max_year'])
 
             if form.cleaned_data['type_of_publication']:
-                publications = publications.filter(type_of_publication__in=type_of_publications)
+                publications = publications.filter(type_of_publication__in=
+                                                   type_of_publications)
         return publications, form
 
 
@@ -91,7 +93,8 @@ class AuthorCreateView(CreateView):
 def create_publication(request):
     """ Страница добавления записи в таблицу"""
     types_options = tuple((str(type_of_publication), str(type_of_publication))
-                          for type_of_publication in Type.objects.all() if type_of_publication.enable)
+                          for type_of_publication in Type.objects.all()
+                          if type_of_publication.enable)
     if request.method == 'POST':
         form = PublicationCreateForm(request.POST, types_options=types_options)
         if form.is_valid():
@@ -106,26 +109,31 @@ def update_publication(request, pk):
     """ Страница редактирования публикации """
     publication = get_object_or_404(Publication, id=pk)
     types_options = tuple((str(type_of_publication), str(type_of_publication))
-                          for type_of_publication in Type.objects.all() if type_of_publication.enable)
+                          for type_of_publication in Type.objects.all()
+                          if type_of_publication.enable)
     if request.method == "POST":
-        form = PublicationUpdateForm(data=request.POST, instance=publication, types_options=types_options)
+        form = PublicationUpdateForm(data=request.POST,
+                                     instance=publication,
+                                     types_options=types_options)
         if form.is_valid():
-            new_type_of_publication = Type.objects.get(type_of_publication=form.cleaned_data['type_of_publication'])
-            old_type_of_publication = Type.objects.get(type_of_publication=form.fields['type_of_publication'].initial)
+            new_type_of_publication = Type.objects.get(type_of_publication=
+                                                       form.cleaned_data['type_of_publication'])
+            old_type_of_publication = Type.objects.get(type_of_publication=
+                                                       form.fields['type_of_publication'].initial)
             publication.uk_number = form.cleaned_data['uk_number']
             publication.save()
             old_type_of_publication.publication_set.remove(publication)
             new_type_of_publication.publication_set.add(
                 Publication.objects.get(uk_number=form.cleaned_data['uk_number']),
-                )
+            )
             publication.type_of_publication = new_type_of_publication
             publication.save()
             form.save()
             return redirect(f'/publisher/publication_info/{publication.id}')
     else:
         form = PublicationUpdateForm(instance=publication, types_options=types_options)
-    return render(request, 'publications_table/publication_update.html', {'form': form,
-                                                                          'publication': publication})
+    return render(request, 'publications_table/publication_update.html',
+                  {'form': form, 'publication': publication})
 
 
 class JsonSearchPublicationsView(ListView):
@@ -168,9 +176,9 @@ def export_table(publications, request):
     return form, table
 
 
-def get_publication_info(request, id: int):
+def get_publication_info(request, pk: int):
     """Страница информации о записи в таблице"""
-    publication = Publication.objects.get(pk=id)
+    publication = Publication.objects.get(pk=pk)
     context = {
         "publication": publication,
     }
@@ -196,9 +204,9 @@ def show_all_authors(request):
     return render(request, "publications_table/all_authors.html", context)
 
 
-def get_author_info(request, id: int):
+def get_author_info(request, pk: int):
     """ Страница информации об авторе"""
-    author = Author.objects.get(pk=id)
+    author = Author.objects.get(pk=pk)
     context = {
         "author": author,
     }

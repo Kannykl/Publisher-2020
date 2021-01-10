@@ -26,16 +26,16 @@ urlpatterns = [
     path('create_author/', AuthorCreateView.as_view(), name='create-author'),
     path('authors/', show_all_authors, name='all_authors'),
     path('delete_author/<int:pk>', AuthorDeleteView.as_view(), name='author-delete'),
-    path('author_info/<int:id>', get_author_info, name='author_info'),
+    path('author_info/<int:pk>', get_author_info, name='author_info'),
     path('author_update/<int:pk>', AuthorUpdateView.as_view(), name='author-update'),
 
     path('create_publication/', create_publication, name='publication-create'),
     path('update_publication/<int:pk>', update_publication, name='publication-update'),
     path('delete_publication/<int:pk>', PublicationDeleteView.as_view(), name='publication-delete'),
-    path('publication_info/<int:id>', get_publication_info, name='info'),
+    path('publication_info/<int:pk>', get_publication_info, name='info'),
 
     path('types/', show_all_types, name='all_types'),
-    path('delete_type/<int:pk>',delete_type_of_publication, name='type-delete'),
+    path('delete_type/<int:pk>', delete_type_of_publication, name='type-delete'),
     path('create_type/', TypeCreateView.as_view(), name='create-type'),
     path('update_type/<int:pk>', TypeUpdateView.as_view(), name='update-type'),
 ]
