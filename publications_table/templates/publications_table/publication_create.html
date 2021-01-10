@@ -3,7 +3,6 @@
 {% block content %}
 {% load widget_tweaks %}
 <main role="main" class="container">
-<div class="content-section">
         <form method="POST">
             {% csrf_token %}
             <fieldset class="form-group">
@@ -25,6 +24,5 @@
                 <button class="btn btn-outline-info" type="submit">Создать</button>
             </div>
         </form>
-    </div>
 </main>
 {% endblock content %}
