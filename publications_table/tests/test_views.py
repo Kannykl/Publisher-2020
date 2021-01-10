@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.test import RequestFactory
 from django.test import TestCase
 from mixer.backend.django import mixer
-from publications_table.models import Publication, Author, Table
+from publications_table.models import Publication, Author, Table, Type
 from publications_table.views import (
     show_all_publications,
     AuthorCreateView,
@@ -35,12 +35,13 @@ class TestViews(TestCase):
         assert Publication.objects.count() == 0
         mixer.blend('publications_table.Author', name='TestName', surname='TestSurname',
                     patronymic='TestPatronymic', work_position='TestWorkPosition', military_rank='TestMilitaryRank')
+        mixer.blend('publications_table.Type', type_of_publication='Тезис')
         path = reverse('publication-create')
         request = RequestFactory().post(path, data={
             'authors': Author.objects.get(name='TestName').id,
             'title': 'Статья1',
             'published_year': 2020,
-            'type_of_publication': 'Тезис',
+            'type_of_publication': Type.objects.get(type_of_publication='Тезис'),
             'edition': 'издание',
             'range': '1-2',
             'uk_number': 2441
@@ -72,8 +73,10 @@ class TestViews(TestCase):
 
     def test_success_delete_publication(self):
         """Успешное удаление публикации"""
+        type_of_publication = mixer.blend('publications_table.Type', type_of_publication='Тезис')
         publication = mixer.blend('publications_table.Publication', title='Статья1', published_year=2020,
-                                  type_of_publication='Тезис', edition='издание', range='1-2', uk_number=123)
+                                  type_of_publication=type_of_publication, edition='издание', range='1-2',
+                                  uk_number=123)
         assert Publication.objects.count() == 1
 
         response = self.client.post(reverse('publication-delete', kwargs={'pk': publication.pk}))
@@ -84,16 +87,18 @@ class TestViews(TestCase):
     def test_success_update_publication(self):
         """Успешное редактирование публикации"""
         assert Publication.objects.count() == 0
+        type_of_publication = mixer.blend('publications_table.Type', type_of_publication='Тезис')
         mixer.blend('publications_table.Author', name='TestName', surname='TestSurname',
                     patronymic='TestPatronymic', work_position='TestWorkPosition', military_rank='TestMilitaryRank')
         publication = mixer.blend('publications_table.Publication', title='СтатьяДоИзменения', published_year=2020,
-                                  type_of_publication='Тезис', edition='издание', range='1-2', uk_number=123)
+                                  type_of_publication=type_of_publication, edition='издание', range='1-2',
+                                  uk_number=123)
         path = reverse('publication-update', kwargs={'pk': publication.id})
         request = RequestFactory().post(path, data={
             'authors': Author.objects.get(name='TestName').id,
             'title': 'СтатьяПослеИзменения',
             'published_year': 2020,
-            'type_of_publication': 'Тезис',
+            'type_of_publication': type_of_publication,
             'edition': 'издание',
             'range': '1-2',
             'uk_number': 2441
@@ -107,10 +112,14 @@ class TestViews(TestCase):
 
     def test_sort(self):
         """Проверка сортировки публикаций"""
+        type_of_publication1 = mixer.blend('publications_table.Type', type_of_publication='Тезис')
+        type_of_publication2 = mixer.blend('publications_table.Type', type_of_publication='Статья')
         publication1 = mixer.blend('publications_table.Publication', title='Статья1', published_year=2020,
-                                   type_of_publication='Тезис', edition='издание2', range='1-2', uk_number=987)
+                                   type_of_publication=type_of_publication1, edition='издание2', range='1-2',
+                                   uk_number=987)
         publication2 = mixer.blend('publications_table.Publication', title='Статья2', published_year=2019,
-                                   type_of_publication='Статья', edition='издание1', range='1-23', uk_number=123)
+                                   type_of_publication=type_of_publication2, edition='издание1', range='1-23',
+                                   uk_number=123)
         ordered_publications = sort(1)
         assert list(ordered_publications) == [publication1, publication2]
         ordered_publications = sort(2)
@@ -126,24 +135,26 @@ class TestViews(TestCase):
 
     def test_filter_publications(self):
         """Проверка фильтрации публикаций"""
+        thesis = mixer.blend('publications_table.Type', type_of_publication='Тезис')
+        article = mixer.blend('publications_table.Type', type_of_publication='Статья')
         publication1 = mixer.blend('publications_table.Publication', title='Статья1', published_year=2020,
-                                   type_of_publication='Тезис', edition='издание2', range='1-2', uk_number=1234)
+                                   type_of_publication=thesis, edition='издание2', range='1-2', uk_number=1234)
         publication2 = mixer.blend('publications_table.Publication', title='Статья2', published_year=2019,
-                                   type_of_publication='Статья', edition='издание1', range='1-23', uk_number=1235)
+                                   type_of_publication=article, edition='издание1', range='1-23', uk_number=1235)
         publication3 = mixer.blend('publications_table.Publication', title='Статья3', published_year=2018,
-                                   type_of_publication='Тезис', edition='издание1', range='1-23', uk_number=1236)
+                                   type_of_publication=thesis, edition='издание1', range='1-23', uk_number=1236)
         publication4 = mixer.blend('publications_table.Publication', title='Статья4', published_year=2017,
-                                   type_of_publication='Статья', edition='издание1', range='1-23', uk_number=1237)
+                                   type_of_publication=article, edition='издание1', range='1-23', uk_number=1237)
         path = reverse('all')
         request = RequestFactory().get(path, data={
-            'type_of_publication': 'Статья'
+            'type_of_publication': article
         })
         request.user = AnonymousUser()
         filtered_publications, _ = filter_publications(request, Publication.objects.all())
 
         assert list(filtered_publications) == [publication2, publication4]
         request = RequestFactory().get(path, data={
-            'type_of_publication': 'Тезис'
+            'type_of_publication': thesis
         })
         filtered_publications, _ = filter_publications(request, Publication.objects.all())
         assert list(filtered_publications) == [publication1, publication3]
@@ -175,18 +186,20 @@ class TestViews(TestCase):
 
     def test_search_publications(self):
         """Проверка поиска публикаций"""
+        thesis = mixer.blend('publications_table.Type', type_of_publication='Тезис')
+        article = mixer.blend('publications_table.Type', type_of_publication='Статья')
         mixer.blend('publications_table.Author', name='TestName', surname='TestSurname',
                     patronymic='TestPatronymic', work_position='TestWorkPosition', military_rank='TestMilitaryRank')
         mixer.blend('publications_table.Publication',
                     title='Статья1', published_year=2020,
-                    type_of_publication='Тезис', edition='издание1', range='1-2', uk_number=1234)
+                    type_of_publication=thesis, edition='издание1', range='1-2', uk_number=1234)
         mixer.blend('publications_table.Publication', title='Статья2', published_year=2019,
                     authors=Author.objects.get(name='TestName').id,
-                    type_of_publication='Статья', edition='издание2', range='1-23', uk_number=1235)
+                    type_of_publication=article, edition='издание2', range='1-23', uk_number=1235)
         mixer.blend('publications_table.Publication', title='Статья3', published_year=2018,
-                    type_of_publication='Тезис', edition='издание3', range='1-23', uk_number=1236)
+                    type_of_publication=thesis, edition='издание3', range='1-23', uk_number=1236)
         mixer.blend('publications_table.Publication', title='Статья4', published_year=2017,
-                    type_of_publication='Статья', edition='издание4', range='1-23', uk_number=1237)
+                    type_of_publication=article, edition='издание4', range='1-23', uk_number=1237)
 
         path = reverse('json_search')
 
@@ -232,11 +245,12 @@ class TestViews(TestCase):
 
     def test_publications_info(self):
         """Проверка работоспособности странички информации о публикации"""
+        article = mixer.blend('publications_table.Type', type_of_publication='Статья')
         mixer.blend('publications_table.Author', name='TestName', surname='TestSurname',
                     patronymic='TestPatronymic', work_position='TestWorkPosition', military_rank='TestMilitaryRank')
         publication = mixer.blend('publications_table.Publication', title='Статья2', published_year=2019,
                                   authors=Author.objects.get(name='TestName').id,
-                                  type_of_publication='Статья', edition='издание2', range='1-23', uk_number=1235)
+                                  type_of_publication=article, edition='издание2', range='1-23', uk_number=1235)
         path = reverse('info', kwargs={'id': publication.id})
         request = RequestFactory().get(path)
         response = get_publication_info(request, id=publication.id)
@@ -244,11 +258,12 @@ class TestViews(TestCase):
 
     def test_export_table(self):
         """ Проверка работы экспорта таблицы"""
+        article = mixer.blend('publications_table.Type', type_of_publication='Статья')
         mixer.blend('publications_table.Author', name='TestName', surname='TestSurname',
                     patronymic='TestPatronymic', work_position='TestWorkPosition', military_rank='TestMilitaryRank')
-        publication = mixer.blend('publications_table.Publication', title='Статья2', published_year=2019,
-                                  authors=Author.objects.get(name='TestName').id,
-                                  type_of_publication='Статья', edition='издание2', range='1-23', uk_number=1235)
+        mixer.blend('publications_table.Publication', title='Статья2', published_year=2019,
+                    authors=Author.objects.get(name='TestName').id,
+                    type_of_publication=article, edition='издание2', range='1-23', uk_number=1235)
 
         path = reverse('all')
         request = RequestFactory().get(path, data={
@@ -274,13 +289,14 @@ class TestViews(TestCase):
 
     def test_fail_create_publication_without_author(self):
         """ Неудачное создание публикации, без автора """
+        thesis = mixer.blend('publications_table.Type', type_of_publication='Тезис')
         assert list(Publication.objects.all()) == list(Publication.objects.none())
 
         path = reverse('publication-create')
         request = RequestFactory().get(path, data={
             'title': 'СтатьяПослеИзменения',
             'published_year': 2020,
-            'type_of_publication': 'Тезис',
+            'type_of_publication': thesis,
             'edition': 'издание',
             'range': '1-2',
             'uk_number': 2441,
