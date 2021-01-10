@@ -112,6 +112,8 @@ def update_publication(request, pk):
         if form.is_valid():
             new_type_of_publication = Type.objects.get(type_of_publication=form.cleaned_data['type_of_publication'])
             old_type_of_publication = Type.objects.get(type_of_publication=form.fields['type_of_publication'].initial)
+            publication.uk_number = form.cleaned_data['uk_number']
+            publication.save()
             old_type_of_publication.publication_set.remove(publication)
             new_type_of_publication.publication_set.add(
                 Publication.objects.get(uk_number=form.cleaned_data['uk_number']),

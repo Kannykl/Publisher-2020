@@ -87,21 +87,22 @@ class TestViews(TestCase):
     def test_success_update_publication(self):
         """Успешное редактирование публикации"""
         assert Publication.objects.count() == 0
-        type_of_publication = mixer.blend('publications_table.Type', type_of_publication='Тезис')
+        old_type_of_publication = mixer.blend('publications_table.Type', type_of_publication='Тезис', enable=True)
+        new_type_of_publication = mixer.blend('publications_table.Type', type_of_publication='Статья', enable=True)
         mixer.blend('publications_table.Author', name='TestName', surname='TestSurname',
                     patronymic='TestPatronymic', work_position='TestWorkPosition', military_rank='TestMilitaryRank')
         publication = mixer.blend('publications_table.Publication', title='СтатьяДоИзменения', published_year=2020,
-                                  type_of_publication=type_of_publication, edition='издание', range='1-2',
+                                  type_of_publication=old_type_of_publication, edition='издание', range='1-2',
                                   uk_number=123)
         path = reverse('publication-update', kwargs={'pk': publication.id})
         request = RequestFactory().post(path, data={
             'authors': Author.objects.get(name='TestName').id,
             'title': 'СтатьяПослеИзменения',
             'published_year': 2020,
-            'type_of_publication': type_of_publication,
+            'type_of_publication': new_type_of_publication,
             'edition': 'издание',
             'range': '1-2',
-            'uk_number': 2441
+            'uk_number': 3,
         })
         request.user = AnonymousUser()
         response = update_publication(request, pk=publication.id)
@@ -109,6 +110,8 @@ class TestViews(TestCase):
         assert f'/publisher/publication_info/{publication.id}' in response.url
         assert Publication.objects.count() == 1
         assert Publication.objects.all()[0].title == 'СтатьяПослеИзменения'
+        assert Publication.objects.all()[0].type_of_publication == new_type_of_publication
+        assert Publication.objects.all()[0].uk_number == 3
 
     def test_sort(self):
         """Проверка сортировки публикаций"""
