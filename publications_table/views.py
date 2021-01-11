@@ -95,6 +95,7 @@ def create_publication(request):
     types_options = tuple((str(type_of_publication), str(type_of_publication))
                           for type_of_publication in Type.objects.all()
                           if type_of_publication.enable)
+    authors = Author.objects.all()
     if request.method == 'POST':
         form = PublicationCreateForm(request.POST, types_options=types_options)
         if form.is_valid():
@@ -102,7 +103,8 @@ def create_publication(request):
             return redirect('/publisher/')
     else:
         form = PublicationCreateForm(types_options=types_options)
-    return render(request, 'publications_table/publication_create.html', {'form': form})
+    return render(request, 'publications_table/publication_create.html', {'form': form,
+                                                                          'authors': authors})
 
 
 def update_publication(request, pk):
@@ -111,6 +113,7 @@ def update_publication(request, pk):
     types_options = tuple((str(type_of_publication), str(type_of_publication))
                           for type_of_publication in Type.objects.all()
                           if type_of_publication.enable)
+    authors = Author.objects.all()
     if request.method == "POST":
         form = PublicationUpdateForm(data=request.POST,
                                      instance=publication,
@@ -133,7 +136,8 @@ def update_publication(request, pk):
     else:
         form = PublicationUpdateForm(instance=publication, types_options=types_options)
     return render(request, 'publications_table/publication_update.html',
-                  {'form': form, 'publication': publication})
+                  {'form': form, 'publication': publication,
+                   'authors': authors})
 
 
 class JsonSearchPublicationsView(ListView):
