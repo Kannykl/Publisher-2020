@@ -1,28 +1,55 @@
-{% extends "publications_table/main.html" %}
+{% extends "publications_table/main2.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
 {% load widget_tweaks %}
 <main role="main" class="container">
+<div class="content-section">
+    {% if messages %}
+            {% for message in messages %}
+                <p class="text-blue">{{message}}</p>
+    <br>
+            {% endfor %}
+    {% endif %}
         <form method="POST">
             {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Создание записи</legend>
-                {% render_field form.title class="form-control" placeholder="Название статьи" %}
-                {% render_field form.authors class="list" %}
-                <a class="nav-link disabled font-italic" href="{% url 'create-author' %}">добавить автора</a>
-                {% render_field form.type_of_publication class="form-control"%}
-                <a class="nav-link disabled font-italic" href="{% url 'create-type' %}">добавить тип</a>
-                {% render_field form.edition class="form-control" placeholder="Издание"%}
-                <br/>
-                {% render_field form.published_year class="form-control" placeholder="Год публикации"%}
-                <br/>
-                {% render_field form.range class="form-control" placeholder="Диапазон"%}
-                <br/>
-                {% render_field form.uk_number class="form-control" placeholder="Номер УК"%}
-            </fieldset>
+             <div class="input-field col s6">
+                 {% render_field form.title type="text" id="table_name" class="validate" %}
+                  <label for="table_name">Название таблицы</label>
+            </div>
+            {% for x in form.authors %}
+             <p>
+                <label>
+                   <input type="checkbox" name="authors" id="authors"  value='{{ forloop.counter0 }}'/>
+                   <span>{% spaceless %}{{x|striptags}}{%endspaceless %}</span>
+                </label>
+             </p>
+            {% endfor %}
+            <a class="nav-link disabled font-italic" href="{% url 'create-author' %}">добавить автора</a>
+            <br>
+            <div class="input-field col s6">
+                {% render_field form.edition type="text" id="edition" class="validate"%}
+                <label for="edition">издание</label>
+            </div>
+            <a class="nav-link disabled font-italic" href="{% url 'create-type' %}">добавить тип</a>
+            <br>
+            <br>
+            {% render_field form.type_of_publication class="browser-default"%}
+            <div class="input-field col s6">
+                {% render_field form.published_year type="text" id="published_year" class="validate"%}
+                 <label for="published_year">год публикации</label>
+            </div>
+            <div class="input-field col s6">
+                {% render_field form.range type="text" id="range" class="validate"%}
+                <label for="range">диапазон</label>
+            </div>
+            <div class="input-field col s6">
+                {% render_field form.uk_number type="text" id="uk_number" class="validate"%}
+                <label for="uk_number">номер УК</label>
+            </div>
             <div class="form-group">
                 <button class="btn btn-outline-info" type="submit">Создать</button>
             </div>
         </form>
+    </div>
 </main>
 {% endblock content %}
