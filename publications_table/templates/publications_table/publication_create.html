@@ -4,23 +4,17 @@
 {% load widget_tweaks %}
 <main role="main" class="container">
 <div class="content-section">
-    {% if messages %}
-            {% for message in messages %}
-                <p class="text-blue">{{message}}</p>
-    <br>
-            {% endfor %}
-    {% endif %}
         <form method="POST">
             {% csrf_token %}
              <div class="input-field col s6">
                  {% render_field form.title type="text" id="table_name" class="validate" %}
-                  <label for="table_name">Название таблицы</label>
+                  <label for="table_name">Название статьи</label>
             </div>
-            {% for x in form.authors %}
+            {% for x in authors %}
              <p>
                 <label>
-                   <input type="checkbox" name="authors" id="authors"  value='{{ forloop.counter0 }}'/>
-                   <span>{% spaceless %}{{x|striptags}}{%endspaceless %}</span>
+                   <input type="checkbox" name="authors" id="authors"  value='{{ x.id }}'/>
+                   <span>{{x}}</span>
                 </label>
              </p>
             {% endfor %}

@@ -1,13 +1,10 @@
-{% extends "publications_table/main.html" %}
+{% extends "publications_table/main2.html" %}
 {% block content %}
 <body>
 <div class="content-section">
         <form method="POST">
             {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Удаление записи</legend>
                 <h2>Вы точно хотите удалить "{{ object.title}}"?</h2>
-            </fieldset>
             <div class="form-group">
                 <button class="btn btn-outline-danger" type="submit">Да, удалить</button>
                 <a class="btn btn-outline-secondary" href="{% url 'all' %}">Отмена</a>
