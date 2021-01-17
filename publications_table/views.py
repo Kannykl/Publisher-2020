@@ -28,6 +28,7 @@ def show_all_publications(request, type_of_sort=0):
         'form2': form2,
         'form3': form3,
         'table': table,
+        'clear_publications': Publication.objects.all(),
     }
     return render(request, "publications_table/all_publications.html", context)
 
@@ -119,18 +120,20 @@ def update_publication(request, pk):
                                      instance=publication,
                                      types_options=types_options)
         if form.is_valid():
-            new_type_of_publication = Type.objects.get(type_of_publication=
-                                                       form.cleaned_data['type_of_publication'])
-            old_type_of_publication = Type.objects.get(type_of_publication=
-                                                       form.fields['type_of_publication'].initial)
-            publication.uk_number = form.cleaned_data['uk_number']
-            publication.save()
-            old_type_of_publication.publication_set.remove(publication)
-            new_type_of_publication.publication_set.add(
-                Publication.objects.get(uk_number=form.cleaned_data['uk_number']),
-            )
-            publication.type_of_publication = new_type_of_publication
-            publication.save()
+            if form.cleaned_data['type_of_publication'] != '':
+                new_type_of_publication = Type.objects.get(type_of_publication=
+                                                           form.cleaned_data['type_of_publication'])
+                publication.title = form.cleaned_data['title']
+                publication.save()
+                old_type_of_publication = Publication.objects.get(title=form.cleaned_data['title']) \
+                    .type_of_publication
+                if old_type_of_publication is not None:
+                    old_type_of_publication.publication_set.remove(publication)
+                new_type_of_publication.publication_set.add(
+                    Publication.objects.get(title=form.cleaned_data['title']),
+                )
+                publication.type_of_publication = new_type_of_publication
+                publication.save()
             form.save()
             return redirect(f'/publisher/publication_info/{publication.id}')
     else:
@@ -229,9 +232,9 @@ class AuthorUpdateView(UpdateView):
 
 
 def show_all_types(request):
-    """ Страница отображения всех авторов"""
-    types = tuple((type_of_publication
-                   for type_of_publication in Type.objects.all() if type_of_publication.enable))
+    """ Страница отображения всех типов"""
+    types = (tuple((type_of_publication
+                    for type_of_publication in Type.objects.all() if type_of_publication.enable)))
     paginator = Paginator(types, 10)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)

@@ -27,18 +27,19 @@ class PublicationCreateForm(forms.ModelForm):
     def save(self, commit=True):
         b = super(PublicationCreateForm, self).save(commit=commit)
         for i in range(len(self.cleaned_data['authors'])):
-            Publication.objects.get(uk_number=self.cleaned_data['uk_number']) \
+            Publication.objects.get(title=self.cleaned_data['title']) \
                 .authors.add(self.cleaned_data['authors'][i])
         b.save()
-        type_of_publication = list(Type.objects.all().filter(type_of_publication
-                                                             =self.cleaned_data['type_of_publication']))[0]
-        Type.objects.get(type_of_publication=self.cleaned_data['type_of_publication']).publication_set.add \
-            (Publication.objects.get(uk_number=self.cleaned_data['uk_number']), bulk=False)
-        Publication.objects.get(uk_number=self.cleaned_data['uk_number']).type_of_publication = type_of_publication
-        Publication.objects.get(uk_number=self.cleaned_data['uk_number']).save()
+        if self.cleaned_data['type_of_publication'] != '':
+            type_of_publication = list(Type.objects.all().filter(type_of_publication
+                                                                 =self.cleaned_data['type_of_publication']))[0]
+            Type.objects.get(type_of_publication=self.cleaned_data['type_of_publication']).publication_set.add \
+                (Publication.objects.get(title=self.cleaned_data['title']), bulk=False)
+            Publication.objects.get(title=self.cleaned_data['title']).type_of_publication = type_of_publication
+            Publication.objects.get(title=self.cleaned_data['title']).save()
 
-    authors = forms.ModelMultipleChoiceField(Author.objects.all(), widget=forms.CheckboxSelectMultiple)
-    type_of_publication = forms.ChoiceField(choices=())
+    authors = forms.ModelMultipleChoiceField(Author.objects.all(), widget=forms.CheckboxSelectMultiple, required=False)
+    type_of_publication = forms.ChoiceField(choices=(), required=False)
 
     class Meta:
         model = Publication
@@ -55,24 +56,24 @@ class PublicationUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         types_options = kwargs.pop('types_options')
         super(PublicationUpdateForm, self).__init__(*args, **kwargs)
-        publication = Publication.objects.get(uk_number=self.initial['uk_number'])
+        publication = Publication.objects.get(title=self.initial['title'])
         self.fields["authors"].initial = (
             Author.objects.all().filter(authors=publication.id)
         )
         self.fields['type_of_publication'].initial = Publication.objects.get(
-            uk_number=self.initial['uk_number']).type_of_publication
+            title=self.initial['title']).type_of_publication
         self.fields['type_of_publication'].choices = types_options
 
     def save(self, commit=True):
         b = super(PublicationUpdateForm, self).save(commit=commit)
-        Publication.objects.get(uk_number=self.cleaned_data['uk_number']).authors.clear()
+        Publication.objects.get(title=self.cleaned_data['title']).authors.clear()
         for i in range(len(self.cleaned_data['authors'])):
-            Publication.objects.get(uk_number=self.cleaned_data['uk_number']) \
+            Publication.objects.get(title=self.cleaned_data['title']) \
                 .authors.add(self.cleaned_data['authors'][i])
         b.save()
 
-    authors = forms.ModelMultipleChoiceField(Author.objects.all(), widget=forms.CheckboxSelectMultiple, )
-    type_of_publication = forms.ChoiceField(choices=())
+    authors = forms.ModelMultipleChoiceField(Author.objects.all(), widget=forms.CheckboxSelectMultiple, required=False)
+    type_of_publication = forms.ChoiceField(choices=(), required=False)
 
     class Meta:
         model = Publication
