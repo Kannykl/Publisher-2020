@@ -35,6 +35,13 @@ align-items: center;
   transition: color .3s linear;
 }
 
+.clmenu {
+  color: white;
+  cursor: pointer;
+  transition: color .3s linear;
+  margin-left:15px;
+}
+
 .cl2:hover, .cl3:hover {
   color: blue;
 }
@@ -69,4 +76,23 @@ td {
 
 a {
 color: #26a69a;
+}
+
+.myalert{
+opacity: 0.4;
+margin-top: 200px;
+margin-left: 600px;
+font-size: 2rem;
+}
+
+.mysidenav {
+    height: 100%;
+    width: 160px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    padding-top: 20px;
 }

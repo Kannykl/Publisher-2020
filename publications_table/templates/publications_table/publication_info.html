@@ -4,10 +4,17 @@
 {% load widget_tweaks %}
 <main role="main" class="container">
 <div class="content-section">
+    {% if publication.published_year != None and publication.type_of_publication != None %}
     <h1 class="display-6">{{publication.title}}({{publication.published_year}}г.)</h1>
         <small>
         {{publication.edition}}
-            {{ publication.type_of_publication }}
+            {{ publication.type_of_publication}}
+    </small>
+    {% else %}
+    <h1 class="display-6">{{publication.title}}</h1>
+        <small>
+        {{publication.edition}}
+    {% endif %}
     </small>
     <br>
          {% for author in publication.authors.all%}

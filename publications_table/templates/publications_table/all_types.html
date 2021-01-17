@@ -6,6 +6,7 @@
 <body>
 <div class="body">
   <div class="container_1">
+    {% if types %}
     <table class="striped">
       <thead>
         <tr>
@@ -22,8 +23,12 @@
         {% endfor %}
       </tbody>
     </table>
+    {% else %}
+    <p class="myalert">Таблица пока что пустая</p>
+    {% endif %}
   </div>
 </div>
+{% if types %}
 <div class="ul_wrapper">
   <ul class="pagination">
     {% for n in authors.paginator.page_range %}
@@ -35,5 +40,6 @@
 {% endfor %}
   </ul>
 </div>
+{% endif %}
 </body>
 {% endblock content %}

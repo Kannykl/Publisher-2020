@@ -50,5 +50,15 @@ var html = '\
         <td>\
             {{uk_number}}\
         </td>\
+        <td>\
+        <a class="btn-secondary btn-sm mt-1 mb-1" href="/publisher/update_publication/{{id}}">\
+        <img src="/static/publisher/images/update_picture.jpg" width="20" height="20">\
+        </a>\
+        </td>\
+        <td>\
+        <a class="btn-secondary btn-sm mt-1 mb-1" href="/publisher/delete_publication/{{id}}">\
+        <img src="/static/publisher/images/delete_picture.png" width="20" height="20">\
+        </a>\
+        </td>\
     </tr>\
 {{/publications}}'

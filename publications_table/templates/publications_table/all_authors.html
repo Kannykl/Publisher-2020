@@ -6,6 +6,7 @@
 <body>
 <div class="body">
   <div class="container_1">
+    {% if authors %}
     <table class="striped">
       <thead>
         <tr>
@@ -20,12 +21,18 @@
             <td><a href="{% url 'author_info' author.id %}">{{author.initials}}</a></td>
             <td>{{author.work_position}}</td>
             <td>{{author.military_rank}}</td>
+            <td><a class="btn-secondary btn-sm mt-1 mb-1" href="{% url 'author-update' author.id %}"><img src="{% static 'images/update_picture.jpg'%}" width="20" height="20"></a></td>
+            <td><a class="btn-secondary btn-sm mt-1 mb-1" href="{% url 'author-delete' author.id %}"><img src="{% static 'images/delete_picture.png'%}" width="20" height="20"></a></td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
+    {% else %}
+    <p class="myalert">Таблица пока что пустая</p>
+    {% endif %}
   </div>
 </div>
+{% if authors %}
 <div class="ul_wrapper">
   <ul class="pagination">
     {% for n in authors.paginator.page_range %}
@@ -37,5 +44,6 @@
 {% endfor %}
   </ul>
 </div>
+{% endif %}
 </body>
 {% endblock content %}

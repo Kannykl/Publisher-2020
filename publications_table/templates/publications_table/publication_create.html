@@ -29,16 +29,24 @@
             <br>
             {% render_field form.type_of_publication class="browser-default"%}
             <div class="input-field col s6">
+                <label for="published_year">год публикации</label>
+                {% if form.published_year.errors %}
+                {% render_field form.published_year type="text" id="published_year" class="invalid tooltipped" data-position="bottom" data-tooltip='Поле неверно заполнено'%}
+                {% else %}
                 {% render_field form.published_year type="text" id="published_year" class="validate"%}
-                 <label for="published_year">год публикации</label>
+                {% endif %}
             </div>
             <div class="input-field col s6">
-                {% render_field form.range type="text" id="range" class="validate"%}
                 <label for="range">диапазон</label>
+                {% render_field form.range type="text" id="range" class="validate"%}
             </div>
             <div class="input-field col s6">
-                {% render_field form.uk_number type="text" id="uk_number" class="validate"%}
                 <label for="uk_number">номер УК</label>
+                {% if form.uk_number.errors %}
+                {% render_field form.uk_number type="text" id="uk_number" class="invalid tooltipped" data-position="bottom" data-tooltip='Поле неверно заполнено'%}
+                {% else %}
+                {% render_field form.uk_number type="text" id="uk_number" class="validate"%}
+                {% endif %}
             </div>
             <div class="form-group">
                 <button class="btn btn-outline-info" type="submit">Создать</button>
@@ -46,4 +54,10 @@
         </form>
     </div>
 </main>
+<script>
+     document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.tooltipped');
+    var instances = M.Tooltip.init(elems,{});
+  });
+</script>
 {% endblock content %}

@@ -5,6 +5,7 @@
 
     <!-- Required meta tags -->
     <meta charset="utf-8">
+     <link rel="shortcut icon" type="image/jpeg" href="{% static 'images/favicon.svg' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/materialize.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/materialize.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/style2.css' %}">
@@ -15,7 +16,7 @@
       <header>
           <div class="menu">
             <a data-target="slide-out" class="sidenav-trigger">
-                    <p><img class="cl3" width="25px" height="25px" src="{% static 'images/menu.svg' %}"></p>
+                    <p><img class="clmenu" width="25px" height="25px" src="{% static 'images/menu.svg' %}"></p>
             </a>
           </div>
         <div class="title">
@@ -26,14 +27,20 @@
               <p class="cl1">Сейчас в таблице: {{publications.object_list.all.count}} записи/ей <p>
               {% else %}
               {% endif %}
+              {% if publications.number %}
+                  <p><a class="cl1" href="{% url 'publication-create'%}">Добавить запись</a></p>
+              {% endif %}
+              {% if authors.number %}
+                  <p><a class="cl1" href="{% url 'create-author'%}">Добавить автора</a></p>
+              {% endif %}
+              {% if types.number %}
+                  <p><a class="cl1" href="{% url 'create-type'%}">Добавить тип</a></p>
+              {% endif %}
               <ul id="slide-out" class="sidenav">
-                <li><div class="user-view">
-                  <li><a class="waves-effect" href="{% url 'all' %}">Публикации</a></li>
-                  <li><a class="waves-effect" href="{% url 'all_authors' %}">Авторы</a></li>
+                  <li><div class="user-view"></div>
+                  <li><a class="cl2" href="{% url 'all' %}">Публикации</a></li>
+                  <li><a class="cl2" href="{% url 'all_authors' %}">Авторы</a></li>
                   <li><a class="cl2" href="{% url 'all_types' %}">Типы публикаций</a></li>
-                  <li><a class="cl2" href="{% url 'publication-create' %}">Добавить новую запись</a></li>
-                  <li><a class="cl3" href="{% url 'create-type' %}">Добавить тип публикации</a></li>
-                  <li><a class="cl3" href="{% url 'create-author' %}">Добавить автора</a></li>
               </ul>
             </div>
       </header>
