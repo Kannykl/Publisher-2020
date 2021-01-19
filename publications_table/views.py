@@ -11,6 +11,7 @@ from .forms import (PublicationFilter,
                     PublicationUpdateForm,
                     )
 from .export import export_in_xls
+from .services import service_filter_publications_by_type_and_published_year, get_all_types, get_all_enable_types, get_all_authors
 
 
 def show_all_publications(request, type_of_sort=0):
@@ -51,32 +52,20 @@ def sort(type_of_sort: int):
         '5': Publication.objects.all().order_by('range'),
         '6': Publication.objects.all().order_by('uk_number'),
     }
-    publications = dictionary[f'{type_of_sort}']
+    if str(type_of_sort) in dictionary.keys():
+        publications = dictionary[f'{type_of_sort}']
+    else:
+        publications = dictionary['0']
     return publications
 
 
 def filter_publications(request, publications):
-    """ Фильтрует записи """
-    types_options = tuple((str(type_of_publication), str(type_of_publication))
-                          for type_of_publication in Type.objects.all())
+    """ Фильтрует записи по году выпуска и типу статьи """
+    types_options = get_all_types()
     if request.method == 'GET':
         form = PublicationFilter(request.GET, types_options=types_options)
         if form.is_valid():
-            type_of_publications = tuple(
-                (Type.objects.get(type_of_publication=type_of_publication).id
-                 for type_of_publication in form.cleaned_data['type_of_publication']))
-
-            if form.cleaned_data['min_year']:
-                publications = publications.filter(published_year__gte=
-                                                   form.cleaned_data['min_year'])
-
-            if form.cleaned_data['max_year']:
-                publications = publications.filter(published_year__lte=
-                                                   form.cleaned_data['max_year'])
-
-            if form.cleaned_data['type_of_publication']:
-                publications = publications.filter(type_of_publication__in=
-                                                   type_of_publications)
+            publications = service_filter_publications_by_type_and_published_year(form=form, publications=publications)
         return publications, form
 
 
@@ -93,10 +82,8 @@ class AuthorCreateView(CreateView):
 
 def create_publication(request):
     """ Страница добавления записи в таблицу"""
-    types_options = tuple((str(type_of_publication), str(type_of_publication))
-                          for type_of_publication in Type.objects.all()
-                          if type_of_publication.enable)
-    authors = Author.objects.all()
+    types_options = get_all_enable_types()
+    authors = get_all_authors()
     if request.method == 'POST':
         form = PublicationCreateForm(request.POST, types_options=types_options)
         if form.is_valid():
