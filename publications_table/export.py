@@ -30,7 +30,10 @@ def export_in_xls(publications, file_name):
         worksheet.write(row, col, publication.title)
         worksheet.write(row, col + 1, publication.edition)
         worksheet.write(row, col + 2, publication.published_year)
-        worksheet.write(row, col + 3, publication.type_of_publication.type_of_publication)
+        if publication.type_of_publication is None:
+            worksheet.write(row, col + 3, '')
+        else:
+            worksheet.write(row, col + 3, publication.type_of_publication.type_of_publication)
         worksheet.write(row, col + 4, publication.range)
         worksheet.write(row, col + 5, publication.uk_number)
         row += 1

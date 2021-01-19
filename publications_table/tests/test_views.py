@@ -470,3 +470,27 @@ class TestViews(TestCase):
         request.user = AnonymousUser()
         response = show_all_types(request)
         assert response.status_code == 200
+
+    def test_export_publications_table_without_type(self):
+        """ Проверка работы экспорта таблицы когда у записи нет типа публикации"""
+        mixer.blend('publications_table.Author', name='TestName', surname='TestSurname',
+                    patronymic='TestPatronymic', work_position='TestWorkPosition', military_rank='TestMilitaryRank')
+        mixer.blend('publications_table.Publication', title='Статья2', published_year=2019,
+                    authors=Author.objects.get(name='TestName').id, edition='издание2', range='1-23', uk_number=1235)
+
+        path = reverse('all')
+        request = RequestFactory().get(path, data={
+            'file_name': '1234.xls'
+        })
+        export_table(Publication.objects.all(), request)
+        assert Table.objects.count() == 1
+
+    def test_export_empty_table(self):
+        """ Проверка работы экспорта таблицы когда в таблице нет записей"""
+
+        path = reverse('all')
+        request = RequestFactory().get(path, data={
+            'file_name': '1234.xls'
+        })
+        export_table(Publication.objects.all(), request)
+        assert Table.objects.count() == 1
