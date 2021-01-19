@@ -7,8 +7,8 @@
         <form method="POST">
             {% csrf_token %}
              <div class="input-field col s6">
-                 {% render_field form.title type="text" id="table_name" class="validate" %}
-                  <label for="table_name">Название статьи</label>
+                 {% render_field form.title type="text" id="title" class="validate" %}
+                  <label for="title">Название статьи</label>
             </div>
             {% for x in authors %}
              <p>

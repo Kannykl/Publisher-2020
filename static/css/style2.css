@@ -85,14 +85,15 @@ margin-left: 600px;
 font-size: 2rem;
 }
 
-.mysidenav {
-    height: 100%;
-    width: 160px;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    background-color: #111;
-    overflow-x: hidden;
-    padding-top: 20px;
+.cl4{
+    text-align: left;
+    margin-left: 15px;
+    margin-right:15px;
+    color: white;
+    cursor: pointer;
+    transition: color .3s linear;
+}
+
+.cl4:hover {
+    color: #f69bff;
 }

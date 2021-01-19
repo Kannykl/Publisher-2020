@@ -15,9 +15,9 @@
     <div class="body">
       <header>
           <div class="menu">
-            <a data-target="slide-out" class="sidenav-trigger">
-                    <p><img class="clmenu" width="25px" height="25px" src="{% static 'images/menu.svg' %}"></p>
-            </a>
+              <p><a class="cl4" href="{% url 'all' %}">Публикации</a></p>
+              <p><a class="cl4" href="{% url 'all_types' %}">Типы</a></p>
+              <p><a class="cl4" href="{% url 'all_authors' %}">Авторы</a></p>
           </div>
         <div class="title">
           <p><a class="cl2" href="{% url 'all' %}">Publisher</a></p>
@@ -28,13 +28,13 @@
               {% else %}
               {% endif %}
               {% if publications.number %}
-                  <p><a class="cl1" href="{% url 'publication-create'%}">Добавить запись</a></p>
+                  <p><a class="cl2" href="{% url 'publication-create'%}">Добавить запись</a></p>
               {% endif %}
               {% if authors.number %}
-                  <p><a class="cl1" href="{% url 'create-author'%}">Добавить автора</a></p>
+                  <p><a class="cl2" href="{% url 'create-author'%}">Добавить автора</a></p>
               {% endif %}
               {% if types.number %}
-                  <p><a class="cl1" href="{% url 'create-type'%}">Добавить тип</a></p>
+                  <p><a class="cl2" href="{% url 'create-type'%}">Добавить тип</a></p>
               {% endif %}
               <ul id="slide-out" class="sidenav">
                   <li><div class="user-view"></div>
