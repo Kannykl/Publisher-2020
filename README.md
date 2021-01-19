@@ -31,3 +31,12 @@ chmod +x entrypoint.sh # cделать файл entrypoint.sh исполняем
 docker-compose -f docker-compose.yml up -d  --build # начальная страница 127.0.0.1:8000/publisher/
 ```
 
+<h3>Запуск тестов на селениум</h3>
+Скачайте вебдрайвер для браузера Chrome для вашей ОС тут https://chromedriver.chromium.org/downloads
+и поместите его в корень проекта.
+Перед запуском тестов докер должен быть остановлен командой ``` docker-compose down ```
+
+```
+chmod +x selenium.sh # сделать файл selenium.sh исполняемым
+./selenium_tests.sh
+```
