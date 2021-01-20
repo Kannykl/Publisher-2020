@@ -5,11 +5,11 @@ from datetime import datetime
 
 class Author(models.Model):
     """Автор публикации"""
-    name = models.CharField(max_length=255, null=False, verbose_name="имя")
-    surname = models.CharField(max_length=255, null=False, unique=True, verbose_name="фамилия")
-    patronymic = models.CharField(max_length=255, null=False, verbose_name="отчество")
-    work_position = models.CharField(max_length=255, null=False, verbose_name="должность")
-    military_rank = models.CharField(max_length=255, null=False, verbose_name="звание")
+    name = models.CharField(max_length=255, verbose_name="имя")
+    surname = models.CharField(max_length=255, unique=True, verbose_name="фамилия")
+    patronymic = models.CharField(max_length=255, verbose_name="отчество")
+    work_position = models.CharField(max_length=255, verbose_name="должность", blank=True)
+    military_rank = models.CharField(max_length=255, verbose_name="звание", blank=True)
 
     objects = models.Manager()
 
