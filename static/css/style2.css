@@ -35,10 +35,7 @@ align-items: center;
   transition: color .3s linear;
 }
 
-.clmenu {
-  color: white;
-  cursor: pointer;
-  transition: color .3s linear;
+.dlt {
   margin-left:15px;
 }
 

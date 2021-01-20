@@ -6,8 +6,8 @@
             {% csrf_token %}
                 <h2>Вы точно хотите удалить "{{ object.title}}"?</h2>
             <div class="form-group">
-                <button class="btn btn-outline-danger" type="submit">Да, удалить</button>
-                <a class="btn btn-outline-secondary" href="{% url 'all' %}">Отмена</a>
+                <button class="btn btn-outline-danger dlt" type="submit">Да, удалить</button>
+                <a class="btn btn-outline-secondary dlt" href="{% url 'all' %}">Отмена</a>
             </div>
         </form>
     </div>
