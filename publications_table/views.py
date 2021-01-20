@@ -1,4 +1,5 @@
 from django.core.paginator import Paginator
+from django.contrib import messages
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -124,8 +125,9 @@ def update_publication(request, pk):
                 )
                 publication.type_of_publication = new_type_of_publication
                 publication.save()
+            messages.success(request, f'{publication.title} успешно изменена')
             form.save()
-            return redirect(f'/publisher/publication_info/{publication.id}')
+            return redirect('/publisher/')
     else:
         form = PublicationUpdateForm(instance=publication, types_options=types_options)
     return render(request, 'publications_table/publication_update.html',

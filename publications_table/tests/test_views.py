@@ -112,7 +112,7 @@ class TestViews(TestCase):
         request.user = AnonymousUser()
         response = update_publication(request, pk=publication.id)
         assert response.status_code == 302
-        assert f'/publisher/publication_info/{publication.id}' in response.url
+        assert '/publisher/' in response.url
         assert Publication.objects.count() == 1
         assert Publication.objects.all()[0].title == 'СтатьяПослеИзменения'
         assert Publication.objects.all()[0].type_of_publication == new_type_of_publication
