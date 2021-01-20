@@ -33,6 +33,8 @@ var html = '\
 {{#publications}}\
     <tr>\
         <td>\
+        </td>\
+        <td>\
             <a href="/publisher/publication_info/{{id}}">{{title}}</a>\
         </td>\
         <td>\

@@ -25,6 +25,10 @@ def export_in_xls(publications, file_name):
         col += 1
 
     row = 1
+    not_filtered_publications = publications
+    publications = publications.filter(is_selected=True)
+    if publications.count() == 0:
+        publications = not_filtered_publications
     for publication in publications:
         col = 0
         worksheet.write(row, col, publication.title)
@@ -39,4 +43,7 @@ def export_in_xls(publications, file_name):
         row += 1
     workbook.close()
     file = Table.objects.create(file=f'{file_name}')
+    for publication in publications:
+        publication.is_selected = False
+        publication.save()
     return file

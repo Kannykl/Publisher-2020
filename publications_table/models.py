@@ -55,6 +55,7 @@ class Publication(models.Model):
                                                  null=True, blank=True)
     range = models.CharField(max_length=255, verbose_name='диапазон', blank=True)
     uk_number = models.IntegerField(verbose_name='номер УК', null=True, blank=True, unique=True)
+    is_selected = models.BooleanField(default=False, null=True)
 
     objects = models.Manager()
 

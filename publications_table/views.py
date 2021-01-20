@@ -11,7 +11,9 @@ from .forms import (PublicationFilter,
                     PublicationUpdateForm,
                     )
 from .export import export_in_xls
-from .services import service_filter_publications_by_type_and_published_year, get_all_types, get_all_enable_types, get_all_authors
+from .services import (service_filter_publications_by_type_and_published_year,
+                       get_all_types, get_all_enable_types,
+                       get_all_authors)
 
 
 def show_all_publications(request, type_of_sort=0):
@@ -65,7 +67,8 @@ def filter_publications(request, publications):
     if request.method == 'GET':
         form = PublicationFilter(request.GET, types_options=types_options)
         if form.is_valid():
-            publications = service_filter_publications_by_type_and_published_year(form=form, publications=publications)
+            publications = service_filter_publications_by_type_and_published_year(
+                form=form, publications=publications)
         return publications, form
 
 
@@ -162,6 +165,10 @@ def export_table(publications, request):
     if request.method == 'GET':
         form = ExportTableForm(request.GET)
         if form.is_valid():
+            for i in range(len(form.cleaned_data['select'])):
+                publication = Publication.objects.get(id=form.cleaned_data['select'][i].id)
+                publication.is_selected = True
+                publication.save()
             if form.cleaned_data['file_name']:
                 file_name = form.cleaned_data['file_name']
                 table = export_in_xls(publications, file_name)

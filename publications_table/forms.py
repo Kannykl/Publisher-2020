@@ -33,8 +33,8 @@ class PublicationCreateForm(forms.ModelForm):
         if self.cleaned_data['type_of_publication'] != '':
             type_of_publication = list(Type.objects.all().filter(type_of_publication
                                                                  =self.cleaned_data['type_of_publication']))[0]
-            Type.objects.get(type_of_publication=self.cleaned_data['type_of_publication']).publication_set.add \
-                (Publication.objects.get(title=self.cleaned_data['title']), bulk=False)
+            Type.objects.get(type_of_publication=self.cleaned_data['type_of_publication']).publication_set.add(
+                Publication.objects.get(title=self.cleaned_data['title']), bulk=False)
             Publication.objects.get(title=self.cleaned_data['title']).type_of_publication = type_of_publication
             Publication.objects.get(title=self.cleaned_data['title']).save()
 
@@ -49,6 +49,8 @@ class PublicationCreateForm(forms.ModelForm):
 
 class ExportTableForm(forms.Form):
     file_name = forms.CharField(max_length=255, label='', required=False)
+    select = forms.ModelMultipleChoiceField(Publication.objects.all(), widget=forms.CheckboxSelectMultiple,
+                                            required=False)
 
 
 class PublicationUpdateForm(forms.ModelForm):
