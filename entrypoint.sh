@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-if [ "$DJANGO_DB_ENGINE" = "django.db.backends.postgresql" ]
+if [ "$DJANGO_DB_ENGINE" == "django.db.backends.postgresql_psycopg2" ]
 then
     echo "Waiting for postgre..."
 
