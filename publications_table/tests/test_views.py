@@ -1,9 +1,12 @@
+import json
+
 import pytest
 from django.contrib.auth.models import AnonymousUser
-from django.urls import reverse
 from django.test import RequestFactory
 from django.test import TestCase
+from django.urls import reverse
 from mixer.backend.django import mixer
+
 from publications_table.models import Publication, Author, Table, Type
 from publications_table.views import (
     show_all_publications,
@@ -21,7 +24,6 @@ from publications_table.views import (
     show_all_types,
     show_all_authors,
 )
-import json
 
 
 @pytest.mark.django_db

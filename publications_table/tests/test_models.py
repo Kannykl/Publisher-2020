@@ -1,5 +1,6 @@
-from mixer.backend.django import mixer
 import pytest
+from mixer.backend.django import mixer
+
 from publications_table.views import Author, Publication
 
 

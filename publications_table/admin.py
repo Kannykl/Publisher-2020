@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from .models import Publication, Author, Table, Type
 
 admin.site.register(Publication)

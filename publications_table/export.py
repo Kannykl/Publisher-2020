@@ -1,18 +1,23 @@
-import xlsxwriter
+"""Этот модуль содержит функцию экспорта таблицы в excel файл """
 import os
+
+import xlsxwriter
 from django.conf import settings
+
 from .models import Table
 
 
 def check_extension(file_name):
+    """Проверяет наличие расширения у файла
+    Если нет, то добавляет его."""
     extension = file_name.split('.')[-1]
     if extension == 'xls':
         return file_name
-    else:
-        return file_name+'.xls'
+    return file_name+'.xls'
 
 
 def export_in_xls(publications, file_name):
+    """Экспортирует данные таблицы в файл excel."""
     file_name = check_extension(file_name)
     workbook = xlsxwriter.Workbook(os.path.join(settings.MEDIA_ROOT, f'{file_name}'))
     worksheet = workbook.add_worksheet()

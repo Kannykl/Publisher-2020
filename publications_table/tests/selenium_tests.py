@@ -1,9 +1,9 @@
+import os
 from time import sleep
 
-from selenium import webdriver
 import pytest
 from django.conf import settings
-import os
+from selenium import webdriver
 
 
 @pytest.fixture

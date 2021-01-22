@@ -1,36 +1,40 @@
-from django.core.paginator import Paginator
+""" Этот модуль содержит django представления """
 from django.contrib import messages
+from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
-from .models import Publication, Author, Type
+
+from .export import export_in_xls
 from .forms import (PublicationFilter,
                     SearchPublications,
                     PublicationCreateForm,
                     ExportTableForm,
                     PublicationUpdateForm,
                     )
-from .export import export_in_xls
+from .models import Publication, Author, Type
 from .services import (service_filter_publications_by_type_and_published_year,
-                       get_all_types, get_all_enable_types,
-                       get_all_authors)
+                       get_all_types_options, get_all_enable_types_options,
+                       get_all_authors, update_type_of_publication,
+                       service_delete_type_of_publication,
+                       get_all_enable_types)
 
 
 def show_all_publications(request, type_of_sort=0):
     """ Страница отображения всех записей"""
     start_publications = sort(type_of_sort)
     filtered_publications, form1 = filter_publications(request, start_publications)
-    form2 = SearchPublications(request.GET)
-    form3, table = export_table(filtered_publications, request)
+    search_form = SearchPublications(request.GET)
+    filter_form, table = export_table(filtered_publications, request)
     paginator = Paginator(filtered_publications, 10)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
     context = {
         'publications': page,
         'form': form1,
-        'form2': form2,
-        'form3': form3,
+        'form2': search_form,
+        'form3': filter_form,
         'table': table,
         'clear_publications': Publication.objects.all(),
     }
@@ -64,13 +68,15 @@ def sort(type_of_sort: int):
 
 def filter_publications(request, publications):
     """ Фильтрует записи по году выпуска и типу статьи """
-    types_options = get_all_types()
+    types_options = get_all_types_options()
     if request.method == 'GET':
         form = PublicationFilter(request.GET, types_options=types_options)
         if form.is_valid():
             publications = service_filter_publications_by_type_and_published_year(
                 form=form, publications=publications)
-        return publications, form
+    else:
+        form = PublicationFilter()
+    return publications, form
 
 
 class AuthorCreateView(CreateView):
@@ -86,7 +92,7 @@ class AuthorCreateView(CreateView):
 
 def create_publication(request):
     """ Страница добавления записи в таблицу"""
-    types_options = get_all_enable_types()
+    types_options = get_all_enable_types_options()
     authors = get_all_authors()
     if request.method == 'POST':
         form = PublicationCreateForm(request.POST, types_options=types_options)
@@ -102,29 +108,16 @@ def create_publication(request):
 def update_publication(request, pk):
     """ Страница редактирования публикации """
     publication = get_object_or_404(Publication, id=pk)
-    types_options = tuple((str(type_of_publication), str(type_of_publication))
-                          for type_of_publication in Type.objects.all()
-                          if type_of_publication.enable)
+    types_options = get_all_enable_types_options()
     authors = Author.objects.all()
     if request.method == "POST":
-        form = PublicationUpdateForm(data=request.POST,
-                                     instance=publication,
-                                     types_options=types_options)
+        form = PublicationUpdateForm(
+            data=request.POST,
+            instance=publication,
+            types_options=types_options
+        )
         if form.is_valid():
-            if form.cleaned_data['type_of_publication'] != '':
-                new_type_of_publication = Type.objects.get(type_of_publication=
-                                                           form.cleaned_data['type_of_publication'])
-                publication.title = form.cleaned_data['title']
-                publication.save()
-                old_type_of_publication = Publication.objects.get(title=form.cleaned_data['title']) \
-                    .type_of_publication
-                if old_type_of_publication is not None:
-                    old_type_of_publication.publication_set.remove(publication)
-                new_type_of_publication.publication_set.add(
-                    Publication.objects.get(title=form.cleaned_data['title']),
-                )
-                publication.type_of_publication = new_type_of_publication
-                publication.save()
+            update_type_of_publication(form, publication)
             messages.success(request, f'{publication.title} успешно изменена')
             form.save()
             return redirect('/publisher/')
@@ -132,7 +125,8 @@ def update_publication(request, pk):
         form = PublicationUpdateForm(instance=publication, types_options=types_options)
     return render(request, 'publications_table/publication_update.html',
                   {'form': form, 'publication': publication,
-                   'authors': authors})
+                   'authors': authors,
+                   })
 
 
 class JsonSearchPublicationsView(ListView):
@@ -162,7 +156,7 @@ class JsonSearchPublicationsView(ListView):
 
 
 def export_table(publications, request):
-    """ Эскпорт в Excel таблицу"""
+    """Эскпорт в Excel таблицу."""
     table = None
     if request.method == 'GET':
         form = ExportTableForm(request.GET)
@@ -180,7 +174,7 @@ def export_table(publications, request):
 
 
 def get_publication_info(request, pk: int):
-    """Страница информации о записи в таблице"""
+    """Страница информации о записи в таблице."""
     publication = Publication.objects.get(pk=pk)
     context = {
         "publication": publication,
@@ -189,14 +183,14 @@ def get_publication_info(request, pk: int):
 
 
 class AuthorDeleteView(DeleteView):
-    """ Страница удаления автора из списка """
+    """Страница удаления автора из списка."""
     model = Author
     template_name = 'publications_table/author_delete.html'
     success_url = '/publisher/authors/'
 
 
 def show_all_authors(request):
-    """ Страница отображения всех авторов"""
+    """Страница отображения всех авторов."""
     authors = Author.objects.all()
     paginator = Paginator(authors, 10)
     page_number = request.GET.get('page', 1)
@@ -208,7 +202,7 @@ def show_all_authors(request):
 
 
 def get_author_info(request, pk: int):
-    """ Страница информации об авторе"""
+    """Страница информации об авторе."""
     author = Author.objects.get(pk=pk)
     context = {
         "author": author,
@@ -217,7 +211,7 @@ def get_author_info(request, pk: int):
 
 
 class AuthorUpdateView(UpdateView):
-    """ Страница изменение параметров автора """
+    """Страница изменение параметров автора."""
     model = Author
     template_name = 'publications_table/author_update.html'
     fields = '__all__'
@@ -228,9 +222,8 @@ class AuthorUpdateView(UpdateView):
 
 
 def show_all_types(request):
-    """ Страница отображения всех типов"""
-    types = (tuple((type_of_publication
-                    for type_of_publication in Type.objects.all() if type_of_publication.enable)))
+    """Страница отображения всех типов."""
+    types = get_all_enable_types()
     paginator = Paginator(types, 10)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
@@ -241,7 +234,7 @@ def show_all_types(request):
 
 
 class TypeUpdateView(UpdateView):
-    """ Страница изменение типа публикации """
+    """Страница изменение типа публикации."""
     model = Type
     template_name = 'publications_table/type_update.html'
     fields = '__all__'
@@ -252,7 +245,7 @@ class TypeUpdateView(UpdateView):
 
 
 class TypeCreateView(CreateView):
-    """ Страница создания типа публикации """
+    """Страница создания типа публикации."""
     model = Type
     template_name = 'publications_table/type_create.html'
     fields = '__all__'
@@ -263,11 +256,10 @@ class TypeCreateView(CreateView):
 
 
 def delete_type_of_publication(request, pk):
-    """ Страница удаления типа публикации """
+    """Страница удаления типа публикации."""
     type_of_publication = Type.objects.get(id=pk)
     if request.method == 'POST':
-        type_of_publication.enable = False
-        type_of_publication.save()
+        service_delete_type_of_publication(type_of_publication)
         return redirect('/publisher/types/')
     context = {
         'object': type_of_publication
