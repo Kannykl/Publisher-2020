@@ -1,3 +1,4 @@
+"""Этот модуль содержит все endpoint приложения publications_table."""
 from django.urls import path
 
 from .views import (

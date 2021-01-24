@@ -36,9 +36,11 @@ def get_all_enable_types_options():
 
 
 def get_all_enable_types():
+    """Получает все видимые типы."""
     types = (tuple((type_of_publication
                     for type_of_publication in Type.objects.all() if type_of_publication.enable)))
     return types
+
 
 def get_all_authors():
     """Возвращает всех авторов."""
@@ -47,6 +49,7 @@ def get_all_authors():
 
 
 def update_type_of_publication(form, publication):
+    """Обновляет тип публикации у записи."""
     if form.cleaned_data['type_of_publication'] != '':
         new_type_of_publication = Type.objects.get(
             type_of_publication=form.cleaned_data['type_of_publication'])
@@ -64,5 +67,6 @@ def update_type_of_publication(form, publication):
 
 
 def service_delete_type_of_publication(type_of_publication):
+    """Делает тип публикации недоступным в общем списке"""
     type_of_publication.enable = False
     type_of_publication.save()
