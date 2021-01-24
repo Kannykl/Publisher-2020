@@ -15,26 +15,27 @@ from .forms import (PublicationFilter,
                     )
 from .models import Publication, Author, Type
 from .services import (service_filter_publications_by_type_and_published_year,
-                       get_all_types_options, get_all_enable_types_options,
+                       get_all_enable_types_options,
                        get_all_authors, update_type_of_publication,
                        service_delete_type_of_publication,
-                       get_all_enable_types)
+                       get_all_enable_types, select_publications_for_export,
+                       get_all_existing_in_publications_types)
 
 
 def show_all_publications(request, type_of_sort=0):
     """ Страница отображения всех записей"""
     start_publications = sort(type_of_sort)
-    filtered_publications, form1 = filter_publications(request, start_publications)
+    filtered_publications, filter_form = filter_publications(request, start_publications)
     search_form = SearchPublications(request.GET)
-    filter_form, table = export_table(filtered_publications, request)
+    export_form, table = export_table(filtered_publications, request)
     paginator = Paginator(filtered_publications, 10)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
     context = {
         'publications': page,
-        'form': form1,
+        'form': filter_form,
         'form2': search_form,
-        'form3': filter_form,
+        'form3': export_form,
         'table': table,
         'clear_publications': Publication.objects.all(),
     }
@@ -68,7 +69,7 @@ def sort(type_of_sort: int):
 
 def filter_publications(request, publications):
     """ Фильтрует записи по году выпуска и типу статьи """
-    types_options = get_all_types_options()
+    types_options = get_all_existing_in_publications_types()
     if request.method == 'GET':
         form = PublicationFilter(request.GET, types_options=types_options)
         if form.is_valid():
@@ -161,10 +162,7 @@ def export_table(publications, request):
     if request.method == 'GET':
         form = ExportTableForm(request.GET)
         if form.is_valid():
-            for i in range(len(form.cleaned_data['select'])):
-                publication = Publication.objects.get(id=form.cleaned_data['select'][i].id)
-                publication.is_selected = True
-                publication.save()
+            select_publications_for_export(form)
             if form.cleaned_data['file_name']:
                 file_name = form.cleaned_data['file_name']
                 table = export_in_xls(publications, file_name)

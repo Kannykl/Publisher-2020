@@ -37,8 +37,8 @@ def get_all_enable_types_options():
 
 def get_all_enable_types():
     """Получает все видимые типы."""
-    types = (tuple((type_of_publication
-                    for type_of_publication in Type.objects.all() if type_of_publication.enable)))
+    types = tuple(type_of_publication
+                  for type_of_publication in Type.objects.all() if type_of_publication.enable)
     return types
 
 
@@ -70,3 +70,19 @@ def service_delete_type_of_publication(type_of_publication):
     """Делает тип публикации недоступным в общем списке"""
     type_of_publication.enable = False
     type_of_publication.save()
+
+
+def select_publications_for_export(form):
+    """Выбор публикаций для экспорта."""
+    for i in range(len(form.cleaned_data['select'])):
+        publication = Publication.objects.get(id=form.cleaned_data['select'][i].id)
+        publication.is_selected = True
+        publication.save()
+
+
+def get_all_existing_in_publications_types():
+    """Получает все типы, использованные в публикациях."""
+    types_options = tuple((str(type_of_publication), str(type_of_publication))
+                          for type_of_publication in Type.objects.all()
+                          if type_of_publication.publication_set.count() != 0)
+    return types_options
