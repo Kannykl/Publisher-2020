@@ -1,6 +1,6 @@
 #!/bin/bash
 
-docker-compose down
+docker-compose stop
 pkill -f runserver
 
 execute_path="$0"

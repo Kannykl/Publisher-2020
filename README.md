@@ -48,6 +48,6 @@ docker-compose down
 ```
 
 ```
-chmod +x selenium.sh # сделать файл selenium.sh исполняемым
+chmod +x selenium_tests.sh # сделать файл selenium_tests.sh исполняемым
 ./selenium_tests.sh
 ```
