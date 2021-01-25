@@ -6,7 +6,7 @@
     "developer": "Kanny",
     "static": "/home/kanny/static",
     "update_token": "ed9ac173-e87a-44ce-8d09-fe162343d95f",
-    "volumes": ["/var/lib/postgresql/data/"],
+    "volumes": ["/home/kanny/data"],
     "media": "/home/kanny/media"
 }
 

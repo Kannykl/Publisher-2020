@@ -14,7 +14,7 @@ services:
   db:
     image: postgres:latest
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - postgres_data:/home/kanny/data/
     environment:
       - POSTGRES_USER=kanny
       - POSTGRES_PASSWORD=123
