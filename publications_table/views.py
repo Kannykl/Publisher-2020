@@ -85,7 +85,7 @@ class AuthorCreateView(CreateView):
     model = Author
     template_name = 'publications_table/author_create.html'
     fields = '__all__'
-    success_url = '/publisher/create_publication/'
+    success_url = '/publisher/authors/'
 
     def form_valid(self, form):
         return super().form_valid(form)
