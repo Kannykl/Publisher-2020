@@ -8,7 +8,7 @@ from django.db import models
 class Author(models.Model):
     """Автор публикации."""
     name = models.CharField(max_length=255, verbose_name="имя")
-    surname = models.CharField(max_length=255, unique=True, verbose_name="фамилия")
+    surname = models.CharField(max_length=255, verbose_name="фамилия")
     patronymic = models.CharField(max_length=255, verbose_name="отчество")
     work_position = models.CharField(max_length=255, verbose_name="должность", blank=True)
     military_rank = models.CharField(max_length=255, verbose_name="звание", blank=True)
