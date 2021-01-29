@@ -91,3 +91,17 @@ class PublicationUpdateForm(forms.ModelForm):
         model = Publication
         fields = '__all__'
         exclude = ['authors', 'type_of_publication']
+
+
+class AuthorCreateForm(forms.ModelForm):
+
+    class Meta:
+        model = Author
+        fields = '__all__'
+
+
+class TypeCreateForm(forms.ModelForm):
+
+    class Meta:
+        model = Type
+        fields = '__all__'

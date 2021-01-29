@@ -11,6 +11,8 @@ from .forms import (PublicationFilter,
                     SearchPublications,
                     PublicationCreateForm,
                     ExportTableForm,
+                    AuthorCreateForm,
+                    TypeCreateForm,
                     PublicationUpdateForm,
                     )
 from .models import Publication, Author, Type
@@ -85,7 +87,14 @@ class AuthorCreateView(CreateView):
     model = Author
     template_name = 'publications_table/author_create.html'
     fields = '__all__'
-    success_url = '/publisher/authors/'
+
+    def get(self, request, *args, **kwargs):
+        page = request.META['HTTP_REFERER']
+        request.session['return_path'] = page
+        return render(request, template_name=self.template_name, context={"form": AuthorCreateForm()})
+
+    def get_success_url(self):
+        return self.request.session['return_path']
 
     def form_valid(self, form):
         return super().form_valid(form)
@@ -247,7 +256,14 @@ class TypeCreateView(CreateView):
     model = Type
     template_name = 'publications_table/type_create.html'
     fields = '__all__'
-    success_url = '/publisher/create_publication/'
+
+    def get(self, request, *args, **kwargs):
+        page = request.META['HTTP_REFERER']
+        request.session['return_path'] = page
+        return render(request, template_name=self.template_name, context={'form': TypeCreateForm()})
+
+    def get_success_url(self):
+        return self.request.session['return_path']
 
     def form_valid(self, form):
         return super().form_valid(form)
