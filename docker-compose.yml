@@ -18,7 +18,7 @@ services:
     environment:
       - POSTGRES_USER=kanny
       - POSTGRES_PASSWORD=123
-      - POSTGRES_DB=publisher_db
+      - POSTGRES_DB=publisher
     ports:
       - 5432:5447
 volumes:

@@ -12,9 +12,9 @@
         "name": "publisher_db",
         "docker_image": "postgres:13.1-alpine",
         "env": {
-            "POSTGRES_USER": "postgres",
+            "POSTGRES_USER": "kanny",
             "POSTGRES_PASSWORD": "123",
-            "POSTGRES_DB": "publisher_db"
+            "POSTGRES_DB": "publisher"
         },
         "volumes": [
             "/var/lib/postgresql/data/"
