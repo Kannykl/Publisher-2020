@@ -8,16 +8,21 @@
     "update_token": "ed9ac173-e87a-44ce-8d09-fe162343d95f",
     "volumes": ["/home/kanny/data"],
     "media": "/home/kanny/media",
+    "environment": {
+        "DJANGO_DB_ENGINE": "django.db.backends.postgresql_psycopg2",
+        "DJANGO_DB_DATABASE": "publisher",
+        "DJANGO_DB_USER": "kanny",
+        "DJANGO_DB_PASSWORD": "123",
+        "DJANGO_DB_HOST": "publisher_db",
+        "DJANGO_DB_PORT": "5432"
+    },
     "database": {
         "name": "publisher_db",
         "docker_image": "postgres:13.1-alpine",
         "env": {
-            "DJANGO_DB_ENGINE": "django.db.backends.postgresql_psycopg2",
-            "DJANGO_DB_DATABASE": "publisher",
-            "DJANGO_DB_USER": "kanny",
-            "DJANGO_DB_PASSWORD": "123",
-            "DJANGO_DB_HOST": "publisher_db",
-            "DJANGO_DB_PORT": "5432"
+            "POSTGRES_USER": "kanny",
+            "POSTGRES_PASSWORD": "123",
+            "POSTGRES_DB": "publisher"
         },
         "volumes": [
             "/var/lib/postgresql/data/"
