@@ -12,13 +12,13 @@ services:
     ports:
         - 8000:8000
   db:
-    image: postgres:latest
+    image: postgres:13.1-alpine
     volumes:
-      - postgres_data:/home/kanny/data
+      - postgres_data:/var/lib/postgresql/data/
     environment:
       - POSTGRES_USER=kanny
       - POSTGRES_PASSWORD=123
-      - POSTGRES_DB=publisher
+      - POSTGRES_DB=publisher_db
     ports:
       - 5432:5447
 volumes:
