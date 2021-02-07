@@ -16,9 +16,6 @@ python manage.py migrate
 python manage.py collectstatic --no-input --clear
 export DJANGO_SETTINGS_MODULE="publisher.settings"
 
-pytest publications_table/tests/test_views.py
-pytest publications_table/tests/test_urls.py
-pytest publications_table/tests/test_models.py
 
 python manage.py runserver 0.0.0.0:8000
 
