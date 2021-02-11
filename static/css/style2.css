@@ -29,6 +29,11 @@ align-items: center;
   padding: 15px;
 }
 
+.my_table {
+width:81%;
+}
+
+
 .cl1, .cl2, .cl3 {
   color: white;
   cursor: pointer;
