@@ -25,8 +25,14 @@ function ren(data) {
     // Рендер шаблона
     let  template = Hogan.compile(html);
     let output = template.render(data);
-    const table = document.querySelector('tbody')
-    table.innerHTML = output;
+    if (data['publications'].length == 0){
+        const alert = document.querySelector('table');
+        alert.innerHTML = output;
+        } else {
+            const table = document.querySelector('tbody');
+            table.innerHTML = output;
+        }
+
 }
 
 var html = '\
@@ -63,4 +69,13 @@ var html = '\
         </a>\
         </td>\
     </tr>\
+{{/publications}}\
+{{^publications}}\
+<thead>\
+    <tr>\
+    </tr>\
+</thead>\
+<tbody>\
+</tbody>\
+<p class="myalert">По вашему запросу ничего не найдено</p>\
 {{/publications}}'
