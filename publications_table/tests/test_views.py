@@ -74,7 +74,6 @@ class TestViews(TestCase):
         request.user = AnonymousUser()
         response = AuthorCreateView.as_view()(request)
         assert response.status_code == 302
-        assert '/publisher/authors/' in response.url
         assert Author.objects.all()[0].name == 'TestName'
         assert Author.objects.count() == 1
 

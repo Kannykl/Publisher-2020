@@ -17,11 +17,13 @@ from .views import (
     TypeCreateView,
     TypeUpdateView,
     delete_type_of_publication,
+    PublicationsListView,
 )
 
 urlpatterns = [
     path('', show_all_publications, name='all'),
-    path('<int:type_of_sort>', show_all_publications, name='sort'),
+    # path('<int:type_of_sort>', show_all_publications, name='sort'),
+    path('<int:type_of_sort>', PublicationsListView.as_view(), name='sort'),
 
     path('json-search/', JsonSearchPublicationsView.as_view(), name='json_search'),
 

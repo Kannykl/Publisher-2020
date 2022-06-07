@@ -24,6 +24,29 @@ from .services import (service_filter_publications_by_type_and_published_year,
                        get_all_existing_in_publications_types)
 
 
+class PublicationsListView(ListView):
+    template_name = "publications_table/all_publications.html"
+    model = Publication
+    context_object_name = 'publications'
+    ordering = 'title'
+
+    def get_queryset(self):
+        type_of_sort = int(self.kwargs['type_of_sort'])
+        return sort(type_of_sort)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        filtered_publications, filter_form = filter_publications(self.request, self.get_queryset())
+        export_form, table = export_table(filtered_publications, self.request)
+        search_form = SearchPublications(self.request.GET)
+        context["table"] = table
+        context["form"] = filter_form
+        context["form3"] = export_form
+        context["clear_publications"] = self.get_queryset()
+        context["search_form"] = search_form
+        return context
+
+
 def show_all_publications(request, type_of_sort=0):
     """ Страница отображения всех записей"""
     start_publications = sort(type_of_sort)
